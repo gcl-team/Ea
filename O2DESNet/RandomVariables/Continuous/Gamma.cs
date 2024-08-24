@@ -64,7 +64,7 @@ namespace O2DESNet.RandomVariables.Continuous
         /// <exception cref="ArgumentOutOfRangeException">
         /// A negative coefficient variation not applicable
         /// </exception>
-        private double CV
+        public double CV
         {
             get
             {

@@ -290,3 +290,7 @@ __pycache__/
 *.xsd.cs
 
 Src/SgkMobileApp/\.mfractor/
+
+
+# NDepend
+NDependOut/
