@@ -1,32 +1,40 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <Version Condition=" '$(BUILD_BUILDNUMBER)' == '' ">1.0.0.0</Version>
-    <Version Condition=" '$(BUILD_BUILDNUMBER)' != '' ">$(BUILD_BUILDNUMBER)</Version>
-    <TargetFramework>netstandard2.1</TargetFramework>
-	  <LangVersion>9.0</LangVersion>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>Li Haobin</Authors>
-    <Description>A framework for Object-Oriented Discrete Event Simulation</Description>
-    <Company>ISEM Department, National University of Singapore</Company>
-    <Copyright>Copyright © 2015-2019 O²DES.NET</Copyright>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>http://www.o2des.net</PackageProjectUrl>
-    <PackageIconUrl>http://www.o2des.net/wp-content/uploads/2016/10/o2des.png</PackageIconUrl>
-    <RepositoryUrl>https://github.com/li-haobin/O2DES.Net</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageTags>O2DES.Net Discrete-Event Simulation</PackageTags>
-  </PropertyGroup>
+	<PropertyGroup>
+		<Version Condition=" '$(BUILD_BUILDNUMBER)' == '' ">1.0.0.0</Version>
+		<Version Condition=" '$(BUILD_BUILDNUMBER)' != '' ">$(BUILD_BUILDNUMBER)</Version>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 
-  <ItemGroup>
-    <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.8" />
-  </ItemGroup>
+		<NoWarn>$(NoWarn);CS1591</NoWarn>
+		<PackageId>Gcl.Ea</PackageId>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<IncludeBuildOutput>true</IncludeBuildOutput>
+		<Description>A framework for Object-Oriented Discrete Event Simulation (cloned from O2DES.Net).</Description>
+		<Authors>Goh Chun Lin</Authors>
+		<Copyright>Copyright 2024, GCL</Copyright>
+		<PackageTags>O2DES.Net, Discrete Event Simulation</PackageTags>
+		<Company>GCL</Company>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/gcl-team/Ea</RepositoryUrl>
+		<PackageReleaseNotes>Please refer to README.</PackageReleaseNotes>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageIcon>logo.png</PackageIcon>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Update="LICENSE">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+		<PackageReference Include="System.Drawing.Common" Version="8.0.8" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="logo.png" Pack="true" Visible="false" PackagePath="" />
+	</ItemGroup>
 
 </Project>
