@@ -54,6 +54,8 @@
         {
             ValidateParameters(mean, cv);
 
+            if (p < 0 || p > 1) throw new ArgumentOutOfRangeException(nameof(p), "Probability must be between 0 and 1.");
+
             var (alpha, beta) = ComputeAlphaBeta(mean, cv);
 
             return MathNet.Numerics.Distributions.Beta.InvCDF(alpha, beta, p);
