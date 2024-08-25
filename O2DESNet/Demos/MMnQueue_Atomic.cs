@@ -1,6 +1,7 @@
 ﻿using O2DESNet;
 using O2DESNet.Distributions;
 using System;
+using static O2DESNet.Distributions.ExponentialHelper;
 
 namespace O2DESNet.Demos
 {
@@ -34,14 +35,14 @@ namespace O2DESNet.Demos
                 Log("Enqueue");
                 HC_InQueue.ObserveChange(1, ClockTime);
             }
-            Schedule(Arrive, Exponential.Sample(DefaultRS, TimeSpan.FromHours(1 / HourlyArrivalRate)));
+            Schedule(Arrive, ExponentialHelper.Sample(DefaultRS, TimeSpan.FromHours(1 / HourlyArrivalRate), TimeUnit.Hours));
         }
 
         private void Start()
         {
             Log("Start");
             HC_InServer.ObserveChange(1, ClockTime);
-            Schedule(Depart, Exponential.Sample(DefaultRS, TimeSpan.FromHours(1 / HourlyServiceRate)));
+            Schedule(Depart, ExponentialHelper.Sample(DefaultRS, TimeSpan.FromHours(1 / HourlyServiceRate), TimeUnit.Hours));
         }
 
         private void Depart()

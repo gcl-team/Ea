@@ -2,6 +2,7 @@
 using O2DESNet.Distributions;
 using O2DESNet.Standard;
 using System;
+using static O2DESNet.Distributions.ExponentialHelper;
 
 namespace O2DESNet.Demos
 {
@@ -46,7 +47,7 @@ namespace O2DESNet.Demos
 
             Generator = AddChild(new Generator(new Generator.Statics
             {
-                InterArrivalTime = rs => Exponential.Sample(rs, TimeSpan.FromHours(1 / HourlyArrivalRate))
+                InterArrivalTime = rs => ExponentialHelper.Sample(rs, TimeSpan.FromHours(1 / HourlyArrivalRate), TimeUnit.Hours)
             }, DefaultRS.Next()));
 
             Queue = AddChild(new Queue(double.PositiveInfinity, DefaultRS.Next()));
@@ -54,7 +55,7 @@ namespace O2DESNet.Demos
             Server = AddChild(new Server(new Server.Statics
             {
                 Capacity = nServers,
-                ServiceTime = (rs, load) => Exponential.Sample(rs, TimeSpan.FromHours(1 / HourlyServiceRate)),
+                ServiceTime = (rs, load) => ExponentialHelper.Sample(rs, TimeSpan.FromHours(1 / HourlyServiceRate), TimeUnit.Hours),
             }, DefaultRS.Next()));
 
             Generator.OnArrive += () => Queue.RqstEnqueue(new Load());

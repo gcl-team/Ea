@@ -4,6 +4,7 @@ using O2DESNet.Standard;
 using O2DESNet.Demos;
 using System;
 using System.Diagnostics;
+using static O2DESNet.Distributions.ExponentialHelper;
 
 namespace O2DESNet.UnitTests
 {
@@ -20,7 +21,7 @@ namespace O2DESNet.UnitTests
         public void Generator()
         {
             var gen = new Generator.Statics { InterArrivalTime = 
-                rs => Exponential.Sample(rs, TimeSpan.FromMinutes(3)) }.Sandbox();
+                rs => ExponentialHelper.Sample(rs, TimeSpan.FromMinutes(3), TimeUnit.Minutes) }.Sandbox();
             gen.Run(TimeSpan.FromHours(0.5));
             gen.Start();
             gen.Run(TimeSpan.FromHours(2));

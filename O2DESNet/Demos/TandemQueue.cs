@@ -2,6 +2,7 @@
 using O2DESNet.Distributions;
 using O2DESNet.Standard;
 using System;
+using static O2DESNet.Distributions.ExponentialHelper;
 
 namespace O2DESNet.Demos
 {
@@ -56,7 +57,7 @@ namespace O2DESNet.Demos
 
             Generator = AddChild(new Generator(new Generator.Statics
             {
-                InterArrivalTime = rs => Exponential.Sample(rs, TimeSpan.FromHours(1 / HourlyArrivalRate))
+                InterArrivalTime = rs => ExponentialHelper.Sample(rs, TimeSpan.FromHours(1 / HourlyArrivalRate), TimeUnit.Hours)
             }, DefaultRS.Next()));
 
             Queue1 = AddChild(new Queue(double.PositiveInfinity, DefaultRS.Next(), id: "Queue1"));
@@ -64,7 +65,7 @@ namespace O2DESNet.Demos
             Server1 = AddChild(new Server(new Server.Statics
             {
                 Capacity = 1,
-                ServiceTime = (rs, load) => Exponential.Sample(rs, TimeSpan.FromHours(1 / HourlyServiceRate1)),
+                ServiceTime = (rs, load) => ExponentialHelper.Sample(rs, TimeSpan.FromHours(1 / HourlyServiceRate1), TimeUnit.Hours),
             }, DefaultRS.Next(), id: "Server1"));
 
             Queue2 = AddChild(new Queue(bufferQSize, DefaultRS.Next(), id: "Queue2"));
@@ -72,7 +73,7 @@ namespace O2DESNet.Demos
             Server2 = AddChild(new Server(new Server.Statics
             {
                 Capacity = 1,
-                ServiceTime = (rs, load) => Exponential.Sample(rs, TimeSpan.FromHours(1 / HourlyServiceRate2)),
+                ServiceTime = (rs, load) => ExponentialHelper.Sample(rs, TimeSpan.FromHours(1 / HourlyServiceRate2), TimeUnit.Hours),
             }, DefaultRS.Next(), id: "Server2"));
 
             Generator.OnArrive += () => Queue1.RqstEnqueue(new Load());

@@ -90,7 +90,7 @@ namespace O2DESNet.Standard
             var time = ClockTime;
             while (true)
             {
-                var hoursElapsed = Exponential.Sample(DefaultRS, 1 / PeakHourlyRate);
+                var hoursElapsed = ExponentialHelper.Sample(DefaultRS, 1 / PeakHourlyRate);
                 var customizedIndices = new List<int>();
                 for (int i = 0; i < Adjusted_CustomizedSeasonalFactors.Count; i++)
                 {
