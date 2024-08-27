@@ -2,7 +2,7 @@
 
 namespace O2DESNet.Distributions
 {
-    public static class Poisson
+    public static class PoissonHelper
     {
         public static int Sample(Random rs, double lambda)
         {
