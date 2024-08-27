@@ -10,7 +10,7 @@ namespace O2DESNet.UnitTests.Distributions
         public void Sample_GivenPositiveMean_ReturnsPositiveTimeSpan()
         {
             var mean = TimeSpan.FromSeconds(5);
-            var result = ExponentialHelper.Sample(new Random(100), mean, ExponentialHelper.TimeUnit.Seconds);
+            var result = ExponentialHelper.Sample(new Random(100), mean, TimeUnit.Seconds);
 
             Assert.That(result.TotalSeconds, Is.GreaterThan(0), "Sample should return a positive TimeSpan");
         }
@@ -19,7 +19,7 @@ namespace O2DESNet.UnitTests.Distributions
         public void Sample_WhenMeanIsZeroOrNegative_ThrowsArgumentOutOfRangeException()
         {
             var mean = TimeSpan.Zero;
-            Assert.Throws<ArgumentOutOfRangeException>(() => ExponentialHelper.Sample(new Random(100), mean, ExponentialHelper.TimeUnit.Seconds));
+            Assert.Throws<ArgumentOutOfRangeException>(() => ExponentialHelper.Sample(new Random(100), mean, TimeUnit.Seconds));
         }
 
         [Test]
@@ -46,7 +46,7 @@ namespace O2DESNet.UnitTests.Distributions
         public void Sample_GivenSmallTimeSpan_DoesNotCausePrecisionIssues()
         {
             var mean = TimeSpan.FromMilliseconds(1);
-            var result = ExponentialHelper.Sample(new Random(100), mean, ExponentialHelper.TimeUnit.Seconds);
+            var result = ExponentialHelper.Sample(new Random(100), mean, TimeUnit.Seconds);
 
             Assert.That(result.TotalMilliseconds, Is.GreaterThan(0), "Sample should handle very small time spans without precision issues");
         }
@@ -54,9 +54,9 @@ namespace O2DESNet.UnitTests.Distributions
         [Test]
         public void Sample_WithVariousTimeUnits_ReturnsConsistentResults()
         {
-            var resultInSeconds = ExponentialHelper.Sample(new Random(100), TimeSpan.FromSeconds(3600), ExponentialHelper.TimeUnit.Seconds).TotalSeconds;
-            var resultInMinutes = ExponentialHelper.Sample(new Random(100), TimeSpan.FromMinutes(60), ExponentialHelper.TimeUnit.Minutes).TotalSeconds;
-            var resultInHours = ExponentialHelper.Sample(new Random(100), TimeSpan.FromHours(1), ExponentialHelper.TimeUnit.Hours).TotalSeconds;
+            var resultInSeconds = ExponentialHelper.Sample(new Random(100), TimeSpan.FromSeconds(3600), TimeUnit.Seconds).TotalSeconds;
+            var resultInMinutes = ExponentialHelper.Sample(new Random(100), TimeSpan.FromMinutes(60), TimeUnit.Minutes).TotalSeconds;
+            var resultInHours = ExponentialHelper.Sample(new Random(100), TimeSpan.FromHours(1), TimeUnit.Hours).TotalSeconds;
             
             // Since the random seed and mean are the same, the results should be consistent
             Assert.That(resultInSeconds, Is.EqualTo(resultInHours).Within(0.00001));

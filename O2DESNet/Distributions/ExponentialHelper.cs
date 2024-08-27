@@ -7,15 +7,6 @@ namespace O2DESNet.Distributions
     /// </summary>
     public static class ExponentialHelper
     {
-        public enum TimeUnit
-        {
-            Days,
-            Hours,
-            Minutes,
-            Seconds,
-            Milliseconds
-        }
-
         /// <summary>
         /// Samples a value from an exponential distribution given a mean.
         /// </summary>
