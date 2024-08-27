@@ -2,7 +2,7 @@
 
 namespace O2DESNet.Distributions
 {
-    public static class LogNormal
+    public static class LogNormalHelper
     {
         /// <summary>
         /// parameters definition
