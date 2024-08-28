@@ -1,146 +1,88 @@
 ﻿using NUnit.Framework;
 using O2DESNet.Distributions;
 
-namespace O2DESNet.UnitTests.Distributions
+namespace O2DESNet.UnitTests.Distributions;
+
+[TestFixture]
+internal class BetaHelperTests
 {
-    [TestFixture]
-    internal class BetaHelperTests
+    public enum ExpectedCondition
     {
-        [Test]
-        public void Sample_GivenValidMeanAndCv_ReturnsExpectedValue()
+        EqualToZero,
+        BetweenZeroAndOne,
+        EqualToMean
+    }
+    
+    [TestCase(0.5, 0.2, ExpectedCondition.BetweenZeroAndOne)]
+    [TestCase(0.0, 0.2, ExpectedCondition.EqualToZero)]
+    [TestCase(0.5, 0.0, ExpectedCondition.EqualToMean)]
+    public void Sample_GivenValidMeanAndCv_ReturnsExpectedValue(double mean, double cv, ExpectedCondition expectedCondition)
+    {
+        var result = BetaHelper.Sample(new Random(100), mean, cv);
+        
+        switch (expectedCondition)
         {
-            double mean = 0.5;
-            double cv = 0.2;
-
-            double result = BetaHelper.Sample(new Random(100), mean, cv);
-
-            Assert.That(result, Is.GreaterThanOrEqualTo(0).And.LessThanOrEqualTo(1));
+            case ExpectedCondition.EqualToZero:
+                Assert.That(result, Is.EqualTo(0));
+                break;
+            case ExpectedCondition.BetweenZeroAndOne:
+                Assert.That(result, Is.GreaterThanOrEqualTo(0).And.LessThanOrEqualTo(1));
+                break;
+            case ExpectedCondition.EqualToMean:
+                Assert.That(result, Is.EqualTo(mean));
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(expectedCondition), expectedCondition, null);
         }
+    }
 
-        [Test]
-        public void Sample_MeanIsZero_ReturnsZero()
-        {
-            double mean = 0.0;
-            double cv = 0.2;
+    [TestCase(-0.1, 0.2)]
+    [TestCase(0.5, -0.1)]
+    public void Sample_InvalidMean_ThrowsArgumentOutOfRangeException(double mean, double cv)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => BetaHelper.Sample(new Random(100), mean, cv));
+    }
 
-            double result = BetaHelper.Sample(new Random(100), mean, cv);
+    [TestCase(0.5, 0.2, 0.3)]
+    public void CDF_GivenValidMeanAndCv_ReturnsExpectedValue(double mean, double cv, double x)
+    {
+        var result = BetaHelper.Cdf(mean, cv, x);
 
-            Assert.That(result, Is.EqualTo(0));
-        }
+        Assert.That(result, Is.GreaterThanOrEqualTo(0).And.LessThanOrEqualTo(1));
+    }
 
-        [Test]
-        public void Sample_CvIsZero_ReturnsMean()
-        {
-            double mean = 0.5;
-            double cv = 0.0;
+    [TestCase(-0.1, 0.2, 0.3)]
+    [TestCase(0.5, -0.1, 0.3)]
+    public void CDF_InvalidMean_ThrowsArgumentOutOfRangeException(double mean, double cv, double x)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => BetaHelper.Cdf(mean, cv, x));
+    }
 
-            double result = BetaHelper.Sample(new Random(100), mean, cv);
+    [TestCase(0.5, 0.2, 0.7)]
+    public void InvCDF_GivenValidMeanAndCv_ReturnsExpectedValue(double mean, double cv, double p)
+    {
+        var result = BetaHelper.InvCdf(mean, cv, p);
 
-            Assert.That(result, Is.EqualTo(mean));
-        }
+        Assert.That(result, Is.GreaterThanOrEqualTo(0).And.LessThanOrEqualTo(1));
+    }
 
-        [Test]
-        public void Sample_InvalidMean_ThrowsArgumentOutOfRangeException()
-        {
-            double mean = -0.1;
-            double cv = 0.2;
+    [TestCase(-0.1, 0.2, 0.7)]
+    [TestCase(0.5, -0.1, 0.7)]
+    [TestCase(0.5, 0.2, 1.5)]
+    public void InvCDF_InvalidMean_ThrowsArgumentOutOfRangeException(double mean, double cv, double p)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => BetaHelper.InvCdf(mean, cv, p));
+    }
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => BetaHelper.Sample(new Random(100), mean, cv));
-        }
+    [Test]
+    public void Sample_ProducesReproducibleResults()
+    {
+        const double mean = 0.5;
+        const double cv = 0.2;
 
-        [Test]
-        public void Sample_InvalidCv_ThrowsArgumentOutOfRangeException()
-        {
-            double mean = 0.5;
-            double cv = -0.1;
+        var firstSample = BetaHelper.Sample(new Random(100), mean, cv);
+        var secondSample = BetaHelper.Sample(new Random(100), mean, cv);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => BetaHelper.Sample(new Random(100), mean, cv));
-        }
-
-        [Test]
-        public void CDF_GivenValidMeanAndCv_ReturnsExpectedValue()
-        {
-            double mean = 0.5;
-            double cv = 0.2;
-            double x = 0.3;
-
-            double result = BetaHelper.CDF(mean, cv, x);
-
-            Assert.That(result, Is.GreaterThanOrEqualTo(0).And.LessThanOrEqualTo(1));
-        }
-
-        [Test]
-        public void CDF_InvalidMean_ThrowsArgumentOutOfRangeException()
-        {
-            double mean = -0.1;
-            double cv = 0.2;
-            double x = 0.3;
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => BetaHelper.CDF(mean, cv, x));
-        }
-
-        [Test]
-        public void CDF_InvalidCv_ThrowsArgumentOutOfRangeException()
-        {
-            double mean = 0.5;
-            double cv = -0.1;
-            double x = 0.3;
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => BetaHelper.CDF(mean, cv, x));
-        }
-
-        [Test]
-        public void InvCDF_GivenValidMeanAndCv_ReturnsExpectedValue()
-        {
-            double mean = 0.5;
-            double cv = 0.2;
-            double p = 0.7;
-
-            double result = BetaHelper.InvCDF(mean, cv, p);
-
-            Assert.That(result, Is.GreaterThanOrEqualTo(0).And.LessThanOrEqualTo(1));
-        }
-
-        [Test]
-        public void InvCDF_InvalidMean_ThrowsArgumentOutOfRangeException()
-        {
-            double mean = -0.1;
-            double cv = 0.2;
-            double p = 0.7;
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => BetaHelper.InvCDF(mean, cv, p));
-        }
-
-        [Test]
-        public void InvCDF_InvalidCv_ThrowsArgumentOutOfRangeException()
-        {
-            double mean = 0.5;
-            double cv = -0.1;
-            double p = 0.7;
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => BetaHelper.InvCDF(mean, cv, p));
-        }
-
-        [Test]
-        public void InvCDF_InvalidP_ThrowsArgumentOutOfRangeException()
-        {
-            double mean = 0.5;
-            double cv = 0.2;
-            double p = 1.5;
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => BetaHelper.InvCDF(mean, cv, p));
-        }
-
-        [Test]
-        public void Sample_ProducesReproducibleResults()
-        {
-            double mean = 0.5;
-            double cv = 0.2;
-
-            double firstSample = BetaHelper.Sample(new Random(100), mean, cv);
-            double secondSample = BetaHelper.Sample(new Random(100), mean, cv);
-
-            Assert.That(firstSample, Is.EqualTo(secondSample));
-        }
+        Assert.That(firstSample, Is.EqualTo(secondSample));
     }
 }
