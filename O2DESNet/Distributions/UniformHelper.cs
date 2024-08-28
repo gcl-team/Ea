@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace O2DESNet.Distributions
 {
-    public static class Uniform
+    public static class UniformHelper
     {
         public static double Sample(Random rs, double lowerbound, double upperbound)
         {

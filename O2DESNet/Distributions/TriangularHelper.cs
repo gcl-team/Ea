@@ -2,7 +2,7 @@
 
 namespace O2DESNet.Distributions
 {
-    public static class Triangular
+    public static class TriangularHelper
     {
         /// <summary>
         /// parameters definition
