@@ -44,7 +44,7 @@ internal class BetaHelperTests
     }
 
     [TestCase(0.5, 0.2, 0.3)]
-    public void CDF_GivenValidMeanAndCv_ReturnsExpectedValue(double mean, double cv, double x)
+    public void Cdf_GivenValidMeanAndCv_ReturnsExpectedValue(double mean, double cv, double x)
     {
         var result = BetaHelper.Cdf(mean, cv, x);
 
@@ -53,13 +53,13 @@ internal class BetaHelperTests
 
     [TestCase(-0.1, 0.2, 0.3)]
     [TestCase(0.5, -0.1, 0.3)]
-    public void CDF_InvalidMean_ThrowsArgumentOutOfRangeException(double mean, double cv, double x)
+    public void Cdf_InvalidMean_ThrowsArgumentOutOfRangeException(double mean, double cv, double x)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => BetaHelper.Cdf(mean, cv, x));
     }
 
     [TestCase(0.5, 0.2, 0.7)]
-    public void InvCDF_GivenValidMeanAndCv_ReturnsExpectedValue(double mean, double cv, double p)
+    public void InvCdf_GivenValidMeanAndCv_ReturnsExpectedValue(double mean, double cv, double p)
     {
         var result = BetaHelper.InvCdf(mean, cv, p);
 
@@ -69,7 +69,7 @@ internal class BetaHelperTests
     [TestCase(-0.1, 0.2, 0.7)]
     [TestCase(0.5, -0.1, 0.7)]
     [TestCase(0.5, 0.2, 1.5)]
-    public void InvCDF_InvalidMean_ThrowsArgumentOutOfRangeException(double mean, double cv, double p)
+    public void InvCdf_InvalidMean_ThrowsArgumentOutOfRangeException(double mean, double cv, double p)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => BetaHelper.InvCdf(mean, cv, p));
     }
