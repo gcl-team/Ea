@@ -15,7 +15,7 @@ public class LogNormalHelperTests
     
     [TestCase(0, 0.5, 0)]
     [TestCase(1, 0, 1)]
-    public void Sample_MeanZero_ReturnsExpectedValue(double mean, double cv, double expectedValue)
+    public void Sample_ValidInput_ReturnsExpectedValue(double mean, double cv, double expectedValue)
     {
         var result = LogNormalHelper.Sample(new Random(100), mean, cv);
         
