@@ -14,7 +14,7 @@ public static class ExponentialHelper
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the mean is less than or equal to zero.</exception>
     public static double Sample(Random rs, double mean)
     {
-        ValidateMean(mean);
+        ValidateParameters(mean);
 
         return MathNet.Numerics.Distributions.Exponential.Sample(rs, 1 / mean);
     }
@@ -49,7 +49,7 @@ public static class ExponentialHelper
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the mean is less than or equal to zero.</exception>
     public static double Cdf(double mean, double x)
     {
-        ValidateMean(mean);
+        ValidateParameters(mean);
 
         return MathNet.Numerics.Distributions.Exponential.CDF(1 / mean, x);
     }
@@ -64,7 +64,7 @@ public static class ExponentialHelper
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the probability is not between 0 and 1.</exception>
     public static double InvCdf(double mean, double p)
     {
-        ValidateMean(mean);
+        ValidateParameters(mean);
         if (p is < 0 or > 1) throw new ArgumentOutOfRangeException(nameof(p), "Probability must be between 0 and 1.");
 
         return MathNet.Numerics.Distributions.Exponential.InvCDF(1 / mean, p);
@@ -75,7 +75,7 @@ public static class ExponentialHelper
     /// </summary>
     /// <param name="mean">The mean value to validate.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the mean is less than or equal to zero.</exception>
-    private static void ValidateMean(double mean)
+    private static void ValidateParameters(double mean)
     {
         const double epsilon = 1e-10; // A small value to avoid division by zero
 

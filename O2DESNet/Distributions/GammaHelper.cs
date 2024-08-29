@@ -14,7 +14,7 @@ public static class GammaHelper
     /// <returns>A random sample from the Gamma distribution.</returns>
     public static double Sample(Random rs, double mean, double cv)
     {
-        ValidateParameters(mean, cv);
+        ValidateParameters(mean, cv, true);
         
         if (mean == 0 || cv == 0) return mean;
         
@@ -85,11 +85,14 @@ public static class GammaHelper
     /// </summary>
     /// <param name="mean">The mean value.</param>
     /// <param name="cv">The coefficient of variation.</param>
+    /// <param name="isMeanPossibleToBeZero">To indicate if the mean of the distribution can be zero or not.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when mean or coefficient of variation are invalid.</exception>
-    private static void ValidateParameters(double mean, double cv)
+    private static void ValidateParameters(double mean, double cv, bool isMeanPossibleToBeZero = false)
     {
         if (mean < 0)
             throw new ArgumentOutOfRangeException(nameof(mean), "Mean must be non-negative.");
+        if (!isMeanPossibleToBeZero && mean == 0)
+            throw new ArgumentOutOfRangeException(nameof(mean), "Zero mean is not applicable.");
         if (cv < 0)
             throw new ArgumentOutOfRangeException(nameof(cv), "Coefficient of variation must be non-negative.");
     }
