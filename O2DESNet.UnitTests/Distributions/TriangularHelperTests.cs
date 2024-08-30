@@ -1,125 +1,80 @@
 using NUnit.Framework;
 using O2DESNet.Distributions;
 
-namespace O2DESNet.UnitTests.Distributions
+namespace O2DESNet.UnitTests.Distributions;
+
+[TestFixture]
+public class TriangularHelperTests
 {
-    [TestFixture]
-    public class TriangularHelperTests
+    [Test]
+    public void Sample_ReturnsValueWithinBounds()
     {
-        private Random _random;
+        const double lower = 1.0;
+        const double upper = 5.0;
+        const double mode = 3.0;
 
-        [SetUp]
-        public void Setup()
-        {
-            _random = new Random();
-        }
+        double result = TriangularHelper.Sample(new Random(100), lower, upper, mode);
 
-        [Test]
-        public void Sample_ReturnsValueWithinBounds()
-        {
-            double lower = 1.0;
-            double upper = 5.0;
-            double mode = 3.0;
+        Assert.That(result, Is.InRange(lower, upper));
+    }
 
-            double result = TriangularHelper.Sample(_random, lower, upper, mode);
+    [TestCase(1, 5, 0)]
+    [TestCase(1, 5, 6)]
+    [TestCase(5, 1, 3)]
+    [TestCase(5, 5, 3)]
+    public void Sample_ThrowsArgumentException_WhenParametersInvalid(double lower, double upper, double mode)
+    {
+        Assert.Throws<ArgumentException>(() => TriangularHelper.Sample(new Random(100), lower, upper, mode));
+    }
 
-            Assert.That(result, Is.InRange(lower, upper));
-        }
+    [Test]
+    public void CDF_ReturnsValueBetweenZeroAndOne()
+    {
+        const double lower = 1.0;
+        const double upper = 5.0;
+        const double mode = 3.0;
+        const double x = 3.0;
 
-        [Test]
-        public void Sample_ThrowsException_WhenModeIsOutOfRange()
-        {
-            double lower = 1.0;
-            double upper = 5.0;
+        double result = TriangularHelper.Cdf(lower, upper, mode, x);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => TriangularHelper.Sample(_random, lower, upper, 0.0));
-            Assert.Throws<ArgumentOutOfRangeException>(() => TriangularHelper.Sample(_random, lower, upper, 6.0));
-        }
+        Assert.That(result, Is.InRange(0.0, 1.0));
+    }
 
-        [Test]
-        public void Sample_ThrowsException_WhenLowerIsGreaterThanOrEqualToUpper()
-        {
-            double mode = 3.0;
+    [TestCase(1, 5, 0, 3)]
+    [TestCase(1, 5, 6, 3)]
+    [TestCase(5, 1, 3, 3)]
+    [TestCase(5, 5, 3, 3)]
+    public void CDF_ThrowsArgumentException_WhenParametersInvalid(double lower, double upper, double mode, double x)
+    {
+        Assert.Throws<ArgumentException>(() => TriangularHelper.Cdf(lower, upper, mode, x));
+    }
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => TriangularHelper.Sample(_random, 5.0, 1.0, mode));
-            Assert.Throws<ArgumentOutOfRangeException>(() => TriangularHelper.Sample(_random, 5.0, 5.0, mode));
-        }
+    [Test]
+    public void InvCDF_ReturnsValueWithinBounds()
+    {
+        const double lower = 1.0;
+        const double upper = 5.0;
+        const double mode = 3.0;
+        const double p = 0.5;
 
-        [Test]
-        public void CDF_ReturnsValueBetweenZeroAndOne()
-        {
-            double lower = 1.0;
-            double upper = 5.0;
-            double mode = 3.0;
-            double x = 3.0;
+        double result = TriangularHelper.InvCdf(lower, upper, mode, p);
 
-            double result = TriangularHelper.CDF(lower, upper, mode, x);
+        Assert.That(result, Is.InRange(lower, upper));
+    }
+    
+    [TestCase(1, 5, 0, 0.5)]
+    [TestCase(1, 5, 6, 0.5)]
+    [TestCase(5, 1, 3, 0.5)]
+    [TestCase(5, 5, 3, 0.5)]
+    public void InvCDF_ThrowsArgumentException_WhenParametersInvalid(double lower, double upper, double mode, double p)
+    {
+        Assert.Throws<ArgumentException>(() => TriangularHelper.InvCdf(lower, upper, mode, p));
+    }
 
-            Assert.That(result, Is.InRange(0.0, 1.0));
-        }
-
-        [Test]
-        public void CDF_ThrowsException_WhenModeIsOutOfRange()
-        {
-            double lower = 1.0;
-            double upper = 5.0;
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => TriangularHelper.CDF(lower, upper, 0.0, 3.0));
-            Assert.Throws<ArgumentOutOfRangeException>(() => TriangularHelper.CDF(lower, upper, 6.0, 3.0));
-        }
-
-        [Test]
-        public void CDF_ThrowsException_WhenLowerIsGreaterThanOrEqualToUpper()
-        {
-            double mode = 3.0;
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => TriangularHelper.CDF(5.0, 1.0, mode, 3.0));
-            Assert.Throws<ArgumentOutOfRangeException>(() => TriangularHelper.CDF(5.0, 5.0, mode, 3.0));
-        }
-
-        [Test]
-        public void InvCDF_ReturnsValueWithinBounds()
-        {
-            double lower = 1.0;
-            double upper = 5.0;
-            double mode = 3.0;
-            double p = 0.5;
-
-            double result = TriangularHelper.InvCDF(lower, upper, mode, p);
-
-            Assert.That(result, Is.InRange(lower, upper));
-        }
-
-        [Test]
-        public void InvCDF_ThrowsException_WhenProbabilityIsOutOfRange()
-        {
-            double lower = 1.0;
-            double upper = 5.0;
-            double mode = 3.0;
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => TriangularHelper.InvCDF(lower, upper, mode, -0.1));
-            Assert.Throws<ArgumentOutOfRangeException>(() => TriangularHelper.InvCDF(lower, upper, mode, 1.1));
-        }
-
-        [Test]
-        public void InvCDF_ThrowsException_WhenModeIsOutOfRange()
-        {
-            double lower = 1.0;
-            double upper = 5.0;
-            double p = 0.5;
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => TriangularHelper.InvCDF(lower, upper, 0.0, p));
-            Assert.Throws<ArgumentOutOfRangeException>(() => TriangularHelper.InvCDF(lower, upper, 6.0, p));
-        }
-
-        [Test]
-        public void InvCDF_ThrowsException_WhenLowerIsGreaterThanOrEqualToUpper()
-        {
-            double mode = 3.0;
-            double p = 0.5;
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => TriangularHelper.InvCDF(5.0, 1.0, mode, p));
-            Assert.Throws<ArgumentOutOfRangeException>(() => TriangularHelper.InvCDF(5.0, 5.0, mode, p));
-        }
+    [TestCase(1, 5, 3, -0.1)]
+    [TestCase(1, 5, 3, 1.1)]
+    public void InvCDF_ThrowsArgumentOutOfRangeExceptio_WhenParametersInvalid(double lower, double upper, double mode, double p)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => TriangularHelper.InvCdf(lower, upper, mode, p));
     }
 }
