@@ -1,47 +1,43 @@
 using NUnit.Framework;
 using O2DESNet.Distributions;
 
-namespace O2DESNet.UnitTests.Distributions
+namespace O2DESNet.UnitTests.Distributions;
+
+[TestFixture]
+public class PoissonTests
 {
-    [TestFixture]
-    public class PoissonTests
+    [Test]
+    public void Sample_ReturnsIntegerValue()
     {
-        private Random _random;
+        const double lambda = 3.5;
+        
+        var result = PoissonHelper.Sample(new Random(100), lambda);
+        
+        Assert.That(result, Is.TypeOf<int>());
+    }
 
-        [SetUp]
-        public void Setup()
-        {
-            _random = new Random();
-        }
+    [TestCase(-1)]
+    [TestCase(0)]
+    public void Sample_ThrowsException_WhenLambdaIsNegativeOrZero(double lambda)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => PoissonHelper.Sample(new Random(100), lambda));
+    }
 
-        [Test]
-        public void Sample_ReturnsIntegerValue()
-        {
-            double lambda = 3.5;
-            int result = PoissonHelper.Sample(_random, lambda);
-            Assert.That(result, Is.TypeOf<int>());
-        }
+    [Test]
+    public void Cdf_ReturnsValueBetweenZeroAndOne()
+    {
+        const double lambda = 3.5;
+        const double x = 2.0;
+        
+        var result = PoissonHelper.Cdf(lambda, x);
+        
+        Assert.That(result, Is.InRange(0.0, 1.0));
+    }
 
-        [Test]
-        public void Sample_ThrowsException_WhenLambdaIsNegative()
-        {
-            Assert.Throws<ArgumentException>(() => PoissonHelper.Sample(_random, -1));
-        }
-
-        [Test]
-        public void CDF_ReturnsValueBetweenZeroAndOne()
-        {
-            double lambda = 3.5;
-            double x = 2.0;
-            double result = PoissonHelper.CDF(lambda, x);
-            Assert.That(result, Is.InRange(0.0, 1.0));
-        }
-
-        [Test]
-        public void CDF_ThrowsException_WhenLambdaIsNegativeOrZero()
-        {
-            Assert.Throws<ArgumentException>(() => PoissonHelper.CDF(-1, 2.0));
-            Assert.Throws<ArgumentException>(() => PoissonHelper.CDF(0, 2.0));
-        }
+    [TestCase(-1, 2)]
+    [TestCase(0, 2)]
+    public void Cdf_ThrowsException_WhenLambdaIsNegativeOrZero(double lambda, double x)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => PoissonHelper.Cdf(lambda, x));
     }
 }
