@@ -36,7 +36,7 @@ internal class GammaHelperTests
     [TestCase(5, 0, 5)]
     public void Sample_ValidTimeSpanMean_ReturnsExpectedValue(double mean, double cv, double expectedValue)
     {
-        var result = GammaHelper.Sample(new Random(100), TimeSpan.FromSeconds(mean), 0.5, TimeUnit.Seconds);
+        var result = GammaHelper.Sample(new Random(100), TimeSpan.FromSeconds(mean), 0.5);
         
         Assert.AreEqual(expectedValue, result.Seconds);
     }
@@ -44,7 +44,7 @@ internal class GammaHelperTests
     [Test]
     public void Sample_TimeSpanValidParameters_ReturnsPositiveTimeSpan()
     {
-        var result = GammaHelper.Sample(new Random(100), TimeSpan.FromDays(5), 0.2, TimeUnit.Days);
+        var result = GammaHelper.Sample(new Random(100), TimeSpan.FromDays(5), 0.2);
         
         Assert.That(result.TotalDays, Is.GreaterThan(0));
     }

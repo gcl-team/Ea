@@ -24,20 +24,11 @@ public static class ExponentialHelper
     /// </summary>
     /// <param name="rs">The random number generator.</param>
     /// <param name="mean">The mean time span of the exponential distribution.</param>
-    /// <param name="timeUnit">The unit of the TimeSpan to return.</param>
     /// <returns>The sampled time span in the specified unit.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the mean time span is less than or equal to zero or if an invalid unit is provided..</exception>
-    public static TimeSpan Sample(Random rs, TimeSpan mean, TimeUnit timeUnit)
+    public static TimeSpan Sample(Random rs, TimeSpan mean)
     {
-        return timeUnit switch
-        {
-            TimeUnit.Days => TimeSpan.FromDays(Sample(rs, mean.TotalDays)),
-            TimeUnit.Hours => TimeSpan.FromHours(Sample(rs, mean.TotalHours)),
-            TimeUnit.Minutes => TimeSpan.FromMinutes(Sample(rs, mean.TotalMinutes)),
-            TimeUnit.Seconds => TimeSpan.FromSeconds(Sample(rs, mean.TotalSeconds)),
-            TimeUnit.Milliseconds => TimeSpan.FromMilliseconds(Sample(rs, mean.TotalMilliseconds)),
-            _ => throw new ArgumentOutOfRangeException(nameof(timeUnit), "Unsupported time unit.")
-        };
+        return TimeSpan.FromSeconds(Sample(rs, mean.TotalSeconds));
     }
 
     /// <summary>
