@@ -24,6 +24,18 @@ public static class GammaHelper
     }
 
     /// <summary>
+    /// Generates a random sample from a Gamma distribution where the mean is represented as a TimeSpan.
+    /// </summary>
+    /// <param name="rs">The random number generator used to produce the sample.</param>
+    /// <param name="mean">The mean of the Gamma distribution expressed as a TimeSpan.</param>
+    /// <param name="cv">The coefficient of variation.</param>
+    /// <returns>A random sample from the Gamma distribution as a TimeSpan.</returns>
+    public static TimeSpan Sample(Random rs, TimeSpan mean, double cv)
+    {
+        return TimeSpan.FromSeconds(Sample(rs, mean.TotalSeconds, cv));
+    }
+
+    /// <summary>
     /// Calculates the cumulative distribution function (CDF) of the Gamma distribution at a specified value.
     /// </summary>
     /// <param name="mean">The mean of the Gamma distribution.</param>
@@ -57,18 +69,6 @@ public static class GammaHelper
         var (k, lambda) = ComputeKLambda(mean, cv);
         
         return MathNet.Numerics.Distributions.Gamma.InvCDF(k, lambda, p);
-    }
-
-    /// <summary>
-    /// Generates a random sample from a Gamma distribution where the mean is represented as a TimeSpan.
-    /// </summary>
-    /// <param name="rs">The random number generator used to produce the sample.</param>
-    /// <param name="mean">The mean of the Gamma distribution expressed as a TimeSpan.</param>
-    /// <param name="cv">The coefficient of variation.</param>
-    /// <returns>A random sample from the Gamma distribution as a TimeSpan.</returns>
-    public static TimeSpan Sample(Random rs, TimeSpan mean, double cv)
-    {
-        return TimeSpan.FromSeconds(Sample(rs, mean.TotalSeconds, cv));
     }
     
     /// <summary>
