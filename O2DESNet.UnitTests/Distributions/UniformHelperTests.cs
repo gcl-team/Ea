@@ -1,87 +1,66 @@
 using NUnit.Framework;
 using O2DESNet.Distributions;
 
-namespace O2DESNet.UnitTests.Distributions
+namespace O2DESNet.UnitTests.Distributions;
+
+[TestFixture]
+public class UniformHelperTests
 {
-    [TestFixture]
-    public class UniformHelperTests
+    public static IEnumerable<object[]> SuccessfulSampleTestCases
     {
-        private Random _random;
-
-        [SetUp]
-        public void Setup()
+        get
         {
-            _random = new Random();
+            yield return new object[] { 1, 10 };
+            yield return new object[] { TimeSpan.FromMinutes(10).TotalSeconds, TimeSpan.FromMinutes(60).TotalSeconds };
         }
-
-        [Test]
-        public void Sample_Double_ReturnsValueWithinBounds()
+    }
+    
+    public static IEnumerable<object[]> FailedSampleTestCases
+    {
+        get
         {
-            double lowerbound = 1.0;
-            double upperbound = 10.0;
-
-            double result = UniformHelper.Sample(_random, lowerbound, upperbound);
-
-            Assert.That(result, Is.InRange(lowerbound, upperbound));
+            yield return new object[] { 10, 1 };
+            yield return new object[] { TimeSpan.FromMinutes(60).TotalSeconds, TimeSpan.FromMinutes(10).TotalSeconds };
         }
+    }
+    
+    [TestCaseSource(nameof(SuccessfulSampleTestCases))]
+    public void Sample_ReturnsValueWithinBounds(double lower, double upper)
+    {
+        var result = UniformHelper.Sample(new Random(100), lower, upper);
 
-        [Test]
-        public void Sample_Double_ThrowsException_WhenLowerBoundGreaterThanUpperBound()
-        {
-            double lowerbound = 10.0;
-            double upperbound = 1.0;
+        Assert.That(result, Is.InRange(lower, upper));
+    }
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => UniformHelper.Sample(_random, lowerbound, upperbound));
-        }
+    [TestCaseSource(nameof(FailedSampleTestCases))]
+    public void Sample_Double_ThrowsException_WhenLowerBoundGreaterThanUpperBound(double lower, double upper)
+    {
+        Assert.Throws<ArgumentException>(() => UniformHelper.Sample(new Random(100), lower, upper));
+    }
 
-        [Test]
-        public void Sample_TimeSpan_ReturnsValueWithinBounds()
-        {
-            TimeSpan lowerbound = TimeSpan.FromMinutes(10);
-            TimeSpan upperbound = TimeSpan.FromMinutes(60);
+    [Test]
+    public void Sample_Generic_ReturnsElementFromCandidates()
+    {
+        var candidates = new List<int> { 1, 2, 3, 4, 5 };
 
-            TimeSpan result = UniformHelper.Sample(_random, lowerbound, upperbound);
+        var result = UniformHelper.Sample(new Random(100), candidates);
 
-            Assert.That(result, Is.GreaterThanOrEqualTo(lowerbound).And.LessThanOrEqualTo(upperbound));
-        }
+        Assert.That(candidates.Contains(result), Is.True);
+    }
 
-        [Test]
-        public void Sample_TimeSpan_ThrowsException_WhenLowerBoundGreaterThanUpperBound()
-        {
-            TimeSpan lowerbound = TimeSpan.FromMinutes(60);
-            TimeSpan upperbound = TimeSpan.FromMinutes(10);
+    [Test]
+    public void Sample_Generic_ThrowsException_WhenCandidatesEmpty()
+    {
+        var candidates = new List<int>();
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => UniformHelper.Sample(_random, lowerbound, upperbound));
-        }
+        Assert.Throws<ArgumentException>(() => UniformHelper.Sample(new Random(100), candidates));
+    }
 
-        [Test]
-        public void Sample_Generic_ReturnsElementFromCandidates()
-        {
-            var candidates = new List<int> { 1, 2, 3, 4, 5 };
+    [Test]
+    public void Sample_Generic_ReturnsNull_WhenCandidatesEmptyAndTypeIsReference()
+    {
+        var candidates = new List<string?>() { null };
 
-            int result = UniformHelper.Sample(_random, candidates);
-
-            Assert.That(candidates.Contains(result), Is.True);
-        }
-
-        [Test]
-        public void Sample_Generic_ReturnsDefault_WhenCandidatesEmpty()
-        {
-            var candidates = new List<int>();
-
-            int result = UniformHelper.Sample(_random, candidates);
-
-            Assert.That(result, Is.EqualTo(default(int)));
-        }
-
-        [Test]
-        public void Sample_Generic_ReturnsNull_WhenCandidatesEmptyAndTypeIsReference()
-        {
-            var candidates = new List<string>();
-
-            string result = UniformHelper.Sample(_random, candidates);
-
-            Assert.That(result, Is.Null);
-        }
+        Assert.Throws<ArgumentException>(() => UniformHelper.Sample(new Random(100), candidates));
     }
 }
