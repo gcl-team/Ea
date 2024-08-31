@@ -12,12 +12,12 @@ public class Simulator
     public DateTime? RealTimeForLastRun { get; set; }
     public bool HasFutureEvents => FutureEventList.Count > 0;
     public DateTime ClockTime { get; protected internal set; } = DateTime.MinValue;
-    public SimulatorSandbox Sandbox { get; private set; }
+    public SimulationSandbox Sandbox { get; private set; }
     public DateTime HeadEventTime => HasFutureEvents ? FutureEventList.First().ScheduledTime : DateTime.MaxValue;
     
     internal SortedSet<SimulationEvent> FutureEventList { get; } = new(new FutureEventComparer());
     
-    public Simulator(SimulatorSandbox sandbox, ILoggerFactory loggerFactory)
+    public Simulator(SimulationSandbox sandbox, ILoggerFactory loggerFactory)
     {
         _logger = loggerFactory.CreateLogger<Simulator>();
         

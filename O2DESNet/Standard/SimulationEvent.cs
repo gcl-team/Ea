@@ -5,7 +5,7 @@ public abstract class SimulationEvent
     private static int _count = 0;
     internal int Index { get; private set; } = _count++;
 
-    internal SimulatorSandbox Sandbox { get; set; } = null;
+    internal SimulationSandbox Sandbox { get; set; } = null;
     internal Simulator? Simulator { get; set; }
     internal protected DateTime ClockTime { get { return Simulator.ClockTime; } }
     public abstract void Invoke();
@@ -18,7 +18,7 @@ public abstract class SimulationEvent
 }
 
 public abstract class SimulationEvent<TSandbox, TConfig> : SimulationEvent 
-    where TSandbox : SimulatorSandbox<TConfig>
+    where TSandbox : SimulationSandbox<TConfig>
     where TConfig : SimulationStaticConfig
 {        
     public TSandbox This { get { return (TSandbox)Sandbox; } set { Sandbox = value; } }

@@ -1,12 +1,12 @@
 namespace O2DESNet.Standard;
 
-public abstract class SimulatorSandbox : ISimulatorSandbox
+public abstract class SimulationSandbox : ISimulatorSandbox
 {
     protected internal Random DefaultRS { get; private set; }
     private int _seed;
     public int Seed { get { return _seed; } set { _seed = value; DefaultRS = new Random(_seed); } }
     
-    public SimulatorSandbox(int seed = 0, string tag = null)
+    public SimulationSandbox(int seed = 0, string tag = null)
     {
         Seed = seed;
         Display = false;
@@ -81,12 +81,12 @@ public abstract class SimulatorSandbox : ISimulatorSandbox
     #endregion
 }
 
-public abstract class SimulatorSandbox<T> : SimulatorSandbox
+public abstract class SimulationSandbox<T> : SimulationSandbox
     where T : SimulationStaticConfig
 {
     public T SimulationStaticConfig { get; private set; }
     
-    public SimulatorSandbox(T simulationStaticConfig, int seed = 0, string tag = null) : base(seed, tag)
+    public SimulationSandbox(T simulationStaticConfig, int seed = 0, string tag = null) : base(seed, tag)
     {
         SimulationStaticConfig = simulationStaticConfig;
     }
