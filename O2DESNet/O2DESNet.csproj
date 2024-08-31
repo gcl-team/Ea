@@ -27,6 +27,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
 		<PackageReference Include="System.Drawing.Common" Version="8.0.8" />
 	</ItemGroup>
 
@@ -35,6 +36,12 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="logo.png" Pack="true" Visible="false" PackagePath="" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Remove="Standard\SimulationWarmUpConfig.cs" />
+	  <Compile Remove="Standard\SimulationTimeTracker.cs" />
+	  <Compile Remove="Standard\SimulationExecutionConfig.cs" />
+	  <Compile Remove="Standard\ReadOnlySimulationTimeTracker.cs" />
 	</ItemGroup>
 
 </Project>
