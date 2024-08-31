@@ -27,7 +27,7 @@ public class Simulator
         }
     }
 
-    public virtual bool Run(IRunStrategy strategy)
+    public bool Run(IRunStrategy strategy)
     {
         return strategy.Run(this);
     }
@@ -40,13 +40,7 @@ public class Simulator
         return result;
     }
     
-    protected internal void Execute(SimulationEvent simulationEvent)
-    {
-        simulationEvent.Simulator = this;
-        simulationEvent.Invoke();
-    }
-    
-    protected internal void Schedule(SimulationEvent simulationEvent, DateTime time)
+    internal void Schedule(SimulationEvent simulationEvent, DateTime time)
     {
         simulationEvent.Simulator ??= this;
 
@@ -55,8 +49,14 @@ public class Simulator
         simulationEvent.ScheduledTime = time;
         FutureEventList.Add(simulationEvent);
     }
+    
+    internal void Execute(SimulationEvent simulationEvent)
+    {
+        simulationEvent.Simulator = this;
+        simulationEvent.Invoke();
+    }
 
-    protected internal bool ExecuteHeadEvent()
+    internal bool ExecuteHeadEvent()
     {
         var head = FutureEventList.FirstOrDefault();
         if (head == null)
