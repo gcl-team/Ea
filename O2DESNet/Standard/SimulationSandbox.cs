@@ -1,93 +1,86 @@
+using O2DESNet.Exceptions;
+
 namespace O2DESNet.Standard;
 
+/// <summary>
+/// Represents the base class for a simulation sandbox, providing a common structure 
+/// and behavior for managing simulation events and randomness.
+/// </summary>
 public abstract class SimulationSandbox : ISimulatorSandbox
 {
-    protected internal Random DefaultRS { get; private set; }
+    private static int _count;
     private int _seed;
-    public int Seed { get { return _seed; } set { _seed = value; DefaultRS = new Random(_seed); } }
     
-    public SimulationSandbox(int seed = 0, string tag = null)
-    {
-        Seed = seed;
-        Display = false;
-        Id = ++_count;
-        Tag = tag;
-    }
+    public int Index { get; }
+    public string Name { get; }
+    public string Tag { get; set; }
 
-    public virtual void WarmedUp(DateTime clockTime) { throw new NotImplementedException(); }
-
-    private class BatchExecuteEvent : SimulationEvent
+    public int Seed
     {
-        internal IEnumerable<SimulationEvent> Events { get; set; }
-        public override void Invoke()
-        {
-            foreach (var e in Events) Execute(e);
-        }
-    }         
-    /// <summary>
-    /// Wrap a batch of events as a single event
-    /// </summary>
-    /// <param name="events">A batch of events</param>
-    /// <returns>The single event</returns>
-    public SimulationEvent EventWrapper(IEnumerable<SimulationEvent> events) { return new BatchExecuteEvent { Events = events }; }
-
-    #region For Logging
-    private string _logFile;
-    public bool Display { get; set; }
-    public string LogFile
-    {
-        get { return _logFile; }
+        get => _seed;
         set
         {
-            _logFile = value; if (_logFile != null) using (var sw = new StreamWriter(_logFile)) { };
+            _seed = value; 
+            DefaultRs = new Random(_seed); // Reinitialize the RNG with the new seed
         }
     }
-    public void Log(string format, params object[] args)
-    {
-        if (Display) Console.WriteLine(format, args);
-        if (LogFile != null) using (var sw = new StreamWriter(LogFile, true)) sw.WriteLine(format, args);
-    }
-    public void Log(DateTime clockTime, params object[] args)
-    {
-        var timeStr = clockTime.ToString("y/M/d H:mm:ss.fff");
-        if (Display)
-        {
-            Console.Write("{0}\t", timeStr);
-            foreach (var arg in args) Console.Write("{0}\t", arg);
-            Console.WriteLine();
-        }
-            
-        if (LogFile != null)
-            using (var sw = new StreamWriter(LogFile, true))
-            {
-                sw.Write("{0},", timeStr);
-                foreach (var arg in args) sw.Write("{0},", arg);
-                sw.WriteLine();
-            }
-    }
-    #endregion
+    
+    /// <summary>
+    /// Gets the list of simulation events associated with this sandbox.
+    /// </summary>
+    public List<SimulationEvent> SimulationEvents { get; } = [];
+    
+    /// <summary>
+    /// Gets the default random number generator, which is initialized with the seed.
+    /// </summary>
+    protected internal Random DefaultRs { get; private set; }
 
-    #region Module-based
-    protected static int _count = 0;
-    public int Id { get; protected set; }
-    public string Name { get; protected set; }
-    public string Tag { get; set; }        
-    public override string ToString()
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SimulationSandbox"/> class with the specified
+    /// seed, name, and tag.
+    /// </summary>
+    /// <param name="seed">The seed value for the random number generator.</param>
+    /// <param name="name">The name of the sandbox instance.</param>
+    /// <param name="tag">The tag associated with the sandbox instance.</param>
+    public SimulationSandbox(int seed, string name, string tag)
     {
-        if (Tag != null && Tag.Length > 0) return Tag;
-        return string.Format("{0}#{1}", Name, Id);
+        Index = ++_count;
+        Name = name;
+        Tag = tag;
+        Seed = seed;
+        DefaultRs = new Random(seed);
     }
-    public List<SimulationEvent> InitEvents { get; } = new();
-    #endregion
+    
+    /// <summary>
+    /// Wraps a collection of simulation events into a single simulation event.
+    /// </summary>
+    /// <param name="events">The collection of simulation events to wrap.</param>
+    /// <returns>A new simulation event that represents the batch of events.</returns>
+    public SimulationEvent EventWrapper(IEnumerable<SimulationEvent> events)
+    {
+        return new SimulationEventInBatch { Events = events };
+    }
+
+    public abstract void WarmedUp(DateTime clockTime);
+
+    /// <summary>
+    /// Returns a string that represents this instance, including the tag if it is not empty.
+    /// </summary>
+    /// <returns>A string that represents this instance.</returns>
+    public override string ToString() => string.IsNullOrWhiteSpace(Tag) ? Tag : $"{Name}#{Index}";
 }
 
-public abstract class SimulationSandbox<T> : SimulationSandbox
+/// <summary>
+/// Represents a generic simulation sandbox that includes a static configuration of type <typeparamref name="T"/>.
+/// Inherits from <see cref="SimulationSandbox"/>.
+/// </summary>
+/// <typeparam name="T">The type of the static configuration used in the simulation.</typeparam>
+public abstract class SimulationSandbox<T>(T simulationStaticConfig, int seed, string name, string tag)
+    : SimulationSandbox(seed, name, tag)
     where T : SimulationStaticConfig
 {
-    public T SimulationStaticConfig { get; private set; }
-    
-    public SimulationSandbox(T simulationStaticConfig, int seed = 0, string tag = null) : base(seed, tag)
-    {
-        SimulationStaticConfig = simulationStaticConfig;
-    }
+    /// <summary>
+    /// Gets the static configuration for the simulation.
+    /// </summary>
+    public T SimulationStaticConfig { get; private set; } = simulationStaticConfig;
 }

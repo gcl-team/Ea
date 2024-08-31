@@ -23,7 +23,7 @@ public class Simulator
         
         Sandbox = sandbox ?? throw new ArgumentNullException(nameof(sandbox));
         
-        foreach (var simulationEvent in Sandbox.InitEvents)
+        foreach (var simulationEvent in Sandbox.SimulationEvents)
         {
             Schedule(simulationEvent, ClockTime);
         }

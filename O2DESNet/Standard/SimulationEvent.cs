@@ -12,8 +12,6 @@ public abstract class SimulationEvent
     protected SimulationEvent() { }
     protected SimulationEvent(Simulator simulator) { Simulator = simulator; }
     internal DateTime ScheduledTime { get; set; }
-    internal protected void Log(string format, params object[] args) { Sandbox.Log(ClockTime, string.Format(format, args)); }
-    internal protected void Log(params object[] args) { Sandbox.Log(ClockTime, args); }
     protected virtual void Execute(SimulationEvent evnt) { Simulator.Execute(evnt); }
 }
 
@@ -23,7 +21,7 @@ public abstract class SimulationEvent<TSandbox, TConfig> : SimulationEvent
 {        
     public TSandbox This { get { return (TSandbox)Sandbox; } set { Sandbox = value; } }
     protected TConfig Config { get { return This.SimulationStaticConfig; } }
-    protected Random DefaultRS { get { return This.DefaultRS; } }
+    protected Random DefaultRS { get { return This.DefaultRs; } }
 
     protected SimulationEvent() { }
     public SimulationEvent(TSandbox state) { Sandbox = state; }
