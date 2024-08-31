@@ -2,7 +2,7 @@ namespace O2DESNet.Standard;
 
 public abstract class SimulatorSandbox : ISimulatorSandbox
 {
-    internal protected Random DefaultRS { get; private set; }
+    protected internal Random DefaultRS { get; private set; }
     private int _seed;
     public int Seed { get { return _seed; } set { _seed = value; DefaultRS = new Random(_seed); } }
     
