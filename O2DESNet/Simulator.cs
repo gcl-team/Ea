@@ -8,12 +8,14 @@ namespace O2DESNet;
 public class Simulator
 {
     private readonly ILogger<Simulator> _logger;
-    public DateTime? RealTimeForLastRun = null;
+    
+    public DateTime? RealTimeForLastRun { get; set; }
     public bool HasFutureEvents => FutureEventList.Count > 0;
-    internal SortedSet<SimulationEvent> FutureEventList { get; } = new(new FutureEventComparer());
     public DateTime ClockTime { get; protected internal set; } = DateTime.MinValue;
     public SimulatorSandbox Sandbox { get; private set; }
     public DateTime HeadEventTime => HasFutureEvents ? FutureEventList.First().ScheduledTime : DateTime.MaxValue;
+    
+    internal SortedSet<SimulationEvent> FutureEventList { get; } = new(new FutureEventComparer());
     
     public Simulator(SimulatorSandbox sandbox, ILoggerFactory loggerFactory)
     {
