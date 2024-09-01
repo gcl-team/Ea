@@ -4,7 +4,7 @@ namespace O2DESNet.Standard;
 /// Tracks the duration of different states of an entity within a simulation.
 /// </summary>
 /// <typeparam name="TState">The type of the state being tracked.</typeparam>
-public class StateTracker<TState> where TState : notnull
+public class StateTracker<TState> where TState : Enum
 {
     private DateTime _initialTime;
 
