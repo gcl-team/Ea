@@ -1,58 +1,146 @@
+using O2DESNet.Exceptions;
+
 namespace O2DESNet.Standard;
 
+/// <summary>
+/// Represents a base class for all events in the simulation.
+/// </summary>
 public abstract class SimulationEvent
 {
     private static int _count = 0;
+    
+    /// <summary>
+    /// Gets the unique index of this event, assigned at creation.
+    /// </summary>
     internal int Index { get; private set; } = _count++;
-
-    internal SimulationSandbox Sandbox { get; set; } = null;
+    /// <summary>
+    /// Gets or sets the sandbox that contains this event.
+    /// </summary>
+    internal SimulationSandbox Sandbox { get; set; }
+    /// <summary>
+    /// Gets or sets the simulator associated with this event. 
+    /// It may be null if not yet assigned.
+    /// </summary>
     internal Simulator? Simulator { get; set; }
-    internal protected DateTime ClockTime { get { return Simulator.ClockTime; } }
-    public abstract void Invoke();
-    protected SimulationEvent() { }
-    protected SimulationEvent(Simulator simulator) { Simulator = simulator; }
+    /// <summary>
+    /// Gets the current clock time from the associated simulator. 
+    /// This represents the real-time equivalent in the simulation.
+    /// </summary>
+    internal protected DateTime ClockTime => Simulator?.ClockTime ?? 
+                                             throw new SimulationException("Simulator is not assigned.");
+    /// <summary>
+    /// The scheduled time for this event to be executed.
+    /// </summary>
     internal DateTime ScheduledTime { get; set; }
-    protected virtual void Execute(SimulationEvent evnt) { Simulator.Execute(evnt); }
+    
+    
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SimulationEvent"/> class.
+    /// </summary>
+    protected SimulationEvent() { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SimulationEvent"/> class 
+    /// with an associated simulator.
+    /// </summary>
+    /// <param name="simulator">The simulator to associate with this event.</param>
+    protected SimulationEvent(Simulator simulator)
+    {
+        Simulator = simulator;
+    }
+    
+    /// <summary>
+    /// Abstract method that must be implemented by derived classes to define 
+    /// the event's behavior when it is invoked.
+    /// </summary>
+    public abstract void Invoke();
+    
+    /// <summary>
+    /// Executes the given event by delegating the execution to the associated simulator.
+    /// </summary>
+    /// <param name="evnt">The event to execute.</param>
+
+    protected virtual void Execute(SimulationEvent simulationEvent) 
+    { 
+        if (Simulator == null) 
+            throw new SimulationException("Simulator is not assigned.");
+        
+        Simulator.Execute(simulationEvent); 
+    }
 }
 
+/// <summary>
+/// Represents a specialized event in the simulation that is associated with a 
+/// specific sandbox and configuration. This class extends the base <see cref="SimulationEvent"/> 
+/// class to handle events with additional type parameters for sandbox and configuration.
+/// </summary>
+/// <typeparam name="TSandbox">The type of the sandbox associated with this event.</typeparam>
+/// <typeparam name="TConfig">The type of the configuration used by the sandbox.</typeparam>
 public abstract class SimulationEvent<TSandbox, TConfig> : SimulationEvent 
     where TSandbox : SimulationSandbox<TConfig>
     where TConfig : SimulationStaticConfig
 {        
-    public TSandbox This { get { return (TSandbox)Sandbox; } set { Sandbox = value; } }
-    protected TConfig Config { get { return This.SimulationStaticConfig; } }
-    protected Random DefaultRS { get { return This.DefaultRs; } }
+    /// <summary>
+    /// Gets or sets the sandbox associated with this event. 
+    /// </summary>
+    public TSandbox TypedSandbox 
+    { 
+        get => (TSandbox)Sandbox;
+        set => Sandbox = value;
+    }
+    
+    /// <summary>
+    /// Gets the configuration associated with the sandbox.
+    /// </summary>
+    protected TConfig Config => TypedSandbox.SimulationStaticConfig;
+    
+    /// <summary>
+    /// Gets the default random number generator used by the sandbox.
+    /// </summary>
+    protected Random DefaultRs => TypedSandbox.DefaultRs;
 
     protected SimulationEvent() { }
-    public SimulationEvent(TSandbox state) { Sandbox = state; }
 
-    private void Induce(SimulationEvent evnt)
+    public SimulationEvent(TSandbox sandbox)
     {
-        if (evnt.Sandbox == null && Sandbox != null) 
-            evnt.Sandbox = Sandbox;
+        Sandbox = sandbox;
     }
-
-    /// <summary>
-    /// Execute an individual event
-    /// </summary>
-    /// <param name="evnt">The event to be executed</param>
-    protected override void Execute(SimulationEvent evnt)
-    {
-        Induce(evnt); Simulator.Execute(evnt);
-    }
+    
     /// <summary>
     /// Execute events in a batch
     /// </summary>
-    /// <param name="events">Batch of events to be executed</param>
-    protected void Execute(IEnumerable<SimulationEvent> events)
+    /// <param name="simulationEvent">Batch of events to be executed</param>
+    protected void Execute(IEnumerable<SimulationEvent> simulationEvent)
     {
-        foreach (var e in events.ToList()) Execute(e);
+        foreach (var simulationEven in simulationEvent.ToList())
+        {
+            Execute(simulationEvent);
+        }
     }
-    protected void Schedule(SimulationEvent evnt, DateTime time) { Induce(evnt); Simulator.Schedule(evnt, time); }
-    protected void Schedule(SimulationEvent evnt, TimeSpan delay) { Schedule(evnt, ClockTime + delay); }
-    protected void Schedule(SimulationEvent evnt) { Schedule(evnt, ClockTime); }
-    protected void Schedule(IEnumerable<SimulationEvent> events)
+
+    protected void Schedule(SimulationEvent simulationEvent, DateTime time)
     {
-        foreach (var e in events) Schedule(e);
+        if (Simulator == null) 
+            throw new SimulationException("Simulator is not assigned.");
+        
+        Simulator.Schedule(simulationEvent, time);
+    }
+
+    protected void Schedule(SimulationEvent simulationEvent, TimeSpan delay)
+    {
+        Schedule(simulationEvent, ClockTime + delay);
+    }
+
+    protected void Schedule(SimulationEvent simulationEvent)
+    {
+        Schedule(simulationEvent, ClockTime);
+    }
+    
+    protected void Schedule(IEnumerable<SimulationEvent> simulationEvents)
+    {
+        foreach (var simulationEvent in simulationEvents)
+        {
+            Schedule(simulationEvent);
+        }
     }
 } 
