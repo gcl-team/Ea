@@ -166,7 +166,10 @@ namespace O2DESNet
             }
         }
         #endregion
-
+        internal HourCounter(bool keepHistory = false)         
+        {
+            Init(null, DateTime.MinValue, keepHistory); 
+        }
         internal HourCounter(ISandbox sandbox, bool keepHistory = false)         
         {
             Init(sandbox, DateTime.MinValue, keepHistory); 
