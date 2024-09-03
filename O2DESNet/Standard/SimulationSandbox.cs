@@ -1,4 +1,4 @@
-using O2DESNet.Exceptions;
+using O2DESNet.StaticConfigs;
 
 namespace O2DESNet.Standard;
 
@@ -77,7 +77,7 @@ public abstract class SimulationSandbox : ISimulatorSandbox
 /// <typeparam name="T">The type of the static configuration used in the simulation.</typeparam>
 public abstract class SimulationSandbox<T>(T simulationStaticConfig, int seed, string name, string tag)
     : SimulationSandbox(seed, name, tag)
-    where T : SimulationStaticConfig
+    where T : IStaticConfig
 {
     /// <summary>
     /// Gets the static configuration for the simulation.

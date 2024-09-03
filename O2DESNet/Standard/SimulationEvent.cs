@@ -1,4 +1,5 @@
 using O2DESNet.Exceptions;
+using O2DESNet.StaticConfigs;
 
 namespace O2DESNet.Standard;
 
@@ -58,7 +59,7 @@ public abstract class SimulationEvent
     /// <summary>
     /// Executes the given event by delegating the execution to the associated simulator.
     /// </summary>
-    /// <param name="evnt">The event to execute.</param>
+    /// <param name="simulationEvent">The event to execute.</param>
 
     protected virtual void Execute(SimulationEvent simulationEvent) 
     { 
@@ -78,12 +79,12 @@ public abstract class SimulationEvent
 /// <typeparam name="TConfig">The type of the configuration used by the sandbox.</typeparam>
 public abstract class SimulationEvent<TSandbox, TConfig> : SimulationEvent 
     where TSandbox : SimulationSandbox<TConfig>
-    where TConfig : SimulationStaticConfig
+    where TConfig : IStaticConfig
 {        
     /// <summary>
     /// Gets or sets the sandbox associated with this event. 
     /// </summary>
-    public TSandbox TypedSandbox 
+    public TSandbox AssociatedSandbox 
     { 
         get => (TSandbox)Sandbox;
         set => Sandbox = value;
@@ -92,12 +93,12 @@ public abstract class SimulationEvent<TSandbox, TConfig> : SimulationEvent
     /// <summary>
     /// Gets the configuration associated with the sandbox.
     /// </summary>
-    protected TConfig Config => TypedSandbox.SimulationStaticConfig;
+    protected TConfig Config => AssociatedSandbox.SimulationStaticConfig;
     
     /// <summary>
     /// Gets the default random number generator used by the sandbox.
     /// </summary>
-    protected Random DefaultRs => TypedSandbox.DefaultRs;
+    protected Random DefaultRs => AssociatedSandbox.DefaultRs;
 
     protected SimulationEvent() { }
 
