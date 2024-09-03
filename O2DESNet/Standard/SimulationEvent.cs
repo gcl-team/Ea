@@ -60,7 +60,6 @@ public abstract class SimulationEvent
     /// Executes the given event by delegating the execution to the associated simulator.
     /// </summary>
     /// <param name="simulationEvent">The event to execute.</param>
-
     protected virtual void Execute(SimulationEvent simulationEvent) 
     { 
         if (Simulator == null) 
