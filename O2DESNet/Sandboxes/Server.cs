@@ -204,7 +204,7 @@ public class Server<TLoad> : SimulationSandbox<ServerStaticConfig<TLoad>>
     /// </summary>
     /// <param name="isReadyToDepart">Indicates whether loads should depart.</param>
     /// <returns>An UpdateIsReadyToDepartEvent to trigger the status update.</returns>
-    public SimulationEvent UpdateToDepart(bool isReadyToDepart)
+    public SimulationEvent UpdateIsReadyToDepart(bool isReadyToDepart)
     {
         return new UpdateIsReadyToDepartEvent
         {
