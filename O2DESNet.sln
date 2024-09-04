@@ -3,16 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "O2DESNet", "O2DESNet\O2DESNet.csproj", "{2430D47F-0E33-4835-859A-E4C948C1C0EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ea", "Ea\Ea.csproj", "{2430D47F-0E33-4835-859A-E4C948C1C0EB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "O2DESNet.UnitTests", "O2DESNet.UnitTests\O2DESNet.UnitTests.csproj", "{3D80B354-FB3B-47FE-AFA3-6D04F4C27653}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ea.UnitTests", "Ea.UnitTests\Ea.UnitTests.csproj", "{3D80B354-FB3B-47FE-AFA3-6D04F4C27653}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{32B8B2A1-A5A0-4F94-A023-08C233045D92}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "O2DESNet.Demo", "O2DESNet.Demo\O2DESNet.Demo.csproj", "{1DCBF9FE-0156-42F5-9FA7-2A62005D6922}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ea.Demo", "Ea.Demo\Ea.Demo.csproj", "{1DCBF9FE-0156-42F5-9FA7-2A62005D6922}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
