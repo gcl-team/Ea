@@ -56,14 +56,14 @@ public class Server<TLoad> : SimulationSandbox<ServerStaticConfig<TLoad>>
     public double Occupation => OccupationCounter.AverageCount / SimulationStaticConfig.Capacity;
 
     /// <summary>
-    /// Stores the start times of each load.
+    /// Stores the start time of each load.
     /// </summary>
-    public Dictionary<TLoad, DateTime> StartTimes { get; private set; } = new();
+    public Dictionary<TLoad, DateTime> StartTimeRecords { get; private set; } = new();
 
     /// <summary>
-    /// Stores the finish times of each load.
+    /// Stores the finish time of each load.
     /// </summary>
-    public Dictionary<TLoad, DateTime> FinishTimes { get; private set; } = new();
+    public Dictionary<TLoad, DateTime> FinishTimeRecords { get; private set; } = new();
 
     /// <summary>
     /// Indicates whether the Server is ready for loads to depart.
@@ -89,7 +89,7 @@ public class Server<TLoad> : SimulationSandbox<ServerStaticConfig<TLoad>>
     /// Retrieves the next load that is ready to depart.
     /// </summary>
     /// <returns>The load ready to depart, or default if none.</returns>
-    protected virtual TLoad GetToDepart()
+    protected virtual TLoad GetReadyToDepartLoad()
     {
         return Served.FirstOrDefault();
     }
@@ -114,7 +114,7 @@ public class Server<TLoad> : SimulationSandbox<ServerStaticConfig<TLoad>>
             AssociatedSandbox.PushIn(Load);
             AssociatedSandbox.UtilizationCounter.ObserveChange(1, ClockTime);
             AssociatedSandbox.OccupationCounter.ObserveChange(1, ClockTime);
-            AssociatedSandbox.StartTimes.Add(Load, ClockTime);
+            AssociatedSandbox.StartTimeRecords.Add(Load, ClockTime);
             
             Schedule(new FinishEvent { Load = Load }, Config.ServiceTime(Load, DefaultRs));
             
@@ -135,7 +135,7 @@ public class Server<TLoad> : SimulationSandbox<ServerStaticConfig<TLoad>>
         {
             AssociatedSandbox.Serving.Remove(Load);
             AssociatedSandbox.Served.Add(Load);
-            AssociatedSandbox.FinishTimes.Add(Load, ClockTime);
+            AssociatedSandbox.FinishTimeRecords.Add(Load, ClockTime);
             AssociatedSandbox.UtilizationCounter.ObserveChange(-1, ClockTime);
             Execute(new StateChangeEvent());
             if (AssociatedSandbox.CheckIsReadyToDepart()) Execute(new DepartEvent());
@@ -177,12 +177,12 @@ public class Server<TLoad> : SimulationSandbox<ServerStaticConfig<TLoad>>
     {
         public override void Invoke()
         {
-            TLoad load = AssociatedSandbox.GetToDepart();
+            TLoad load = AssociatedSandbox.GetReadyToDepartLoad();
             AssociatedSandbox.Served.Remove(load);
             AssociatedSandbox.OccupationCounter.ObserveChange(-1, ClockTime);
             // in case the start/finish times are used in OnDepart events
-            AssociatedSandbox.StartTimes.Remove(load);
-            AssociatedSandbox.FinishTimes.Remove(load);
+            AssociatedSandbox.StartTimeRecords.Remove(load);
+            AssociatedSandbox.FinishTimeRecords.Remove(load);
             foreach (var simulationEvent in AssociatedSandbox.OnDepart) Execute(simulationEvent(load));
 
             Execute(new StateChangeEvent());
