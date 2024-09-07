@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<NDepend AppName="O2DESNet" Platform="DotNet" FileWrittenByProductVersion="2024.1.1.9735">
+<NDepend AppName="Ea" Platform="DotNet" FileWrittenByProductVersion="2024.1.1.9735">
   <OutputDir KeepXmlFiles="False">.\NDependOut</OutputDir>
   <IDEFiles>
-    <IDEFile FilePath=".\O2DESNet.sln" Filters="-test" Configuration="DEBUG|AnyCPU">
+    <IDEFile FilePath=".\Ea.sln" Filters="-test" Configuration="DEBUG|AnyCPU">
       <RootDirResolvingInfo Enabled="False" Hints="Debug|bin|.bin|b|AnyCPU|x64|x86|v*.*|net*" TimeOut="10">
         <RootDir>.</RootDir>
       </RootDirResolvingInfo>
