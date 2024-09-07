@@ -10,16 +10,16 @@ namespace Ea.Standard;
 [SuppressMessage("NDepend", "ND2102:AvoidDefiningMultipleTypesInASourceFile", Justification = "SimulationEvent<TSandbox, TConfig> is relatively small and closely linked to SimulationEvent")]
 public abstract class SimulationEvent
 {
-    private static int _count = 0;
+    private static int Count = 0;
     
     /// <summary>
     /// Gets the unique index of this event, assigned at creation.
     /// </summary>
-    internal int Index { get; private set; } = _count++;
+    internal int Index { get; private set; } = Interlocked.Increment(ref Count) - 1;
     /// <summary>
     /// Gets or sets the sandbox that contains this event.
     /// </summary>
-    internal SimulationSandbox Sandbox { get; set; }
+    internal SimulationSandboxBase Sandbox { get; set; }
     /// <summary>
     /// Gets or sets the simulator associated with this event. 
     /// It may be null if not yet assigned.
@@ -78,6 +78,7 @@ public abstract class SimulationEvent
 /// </summary>
 /// <typeparam name="TSandbox">The type of the sandbox associated with this event.</typeparam>
 /// <typeparam name="TConfig">The type of the configuration used by the sandbox.</typeparam>
+[SuppressMessage("NDepend", "ND2102:AvoidDefiningMultipleTypesInASourceFile", Justification = "SimulationEvent<TSandbox, TConfig> is relatively small and closely linked to SimulationEvent")]
 public abstract class SimulationEvent<TSandbox, TConfig> : SimulationEvent 
     where TSandbox : SimulationSandbox<TConfig>
     where TConfig : IStaticConfig
@@ -103,7 +104,7 @@ public abstract class SimulationEvent<TSandbox, TConfig> : SimulationEvent
 
     protected SimulationEvent() { }
 
-    public SimulationEvent(TSandbox sandbox)
+    protected SimulationEvent(TSandbox sandbox)
     {
         Sandbox = sandbox;
     }

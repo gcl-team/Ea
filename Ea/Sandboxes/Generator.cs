@@ -67,7 +67,7 @@ public class Generator<TLoad> : SimulationSandbox<GeneratorStaticConfig<TLoad>>
     
     private abstract class InternalEvent : SimulationEvent<Generator<TLoad>, GeneratorStaticConfig<TLoad>> { }
     
-    private class StartEvent : InternalEvent
+    private sealed class StartEvent : InternalEvent
     {
         public override void Invoke()
         {
@@ -92,7 +92,7 @@ public class Generator<TLoad> : SimulationSandbox<GeneratorStaticConfig<TLoad>>
         }
     }
 
-    private class EndEvent : InternalEvent
+    private sealed class EndEvent : InternalEvent
     {
         public override void Invoke()
         {
@@ -103,7 +103,7 @@ public class Generator<TLoad> : SimulationSandbox<GeneratorStaticConfig<TLoad>>
         }
     }
 
-    private class ArriveEvent : InternalEvent
+    private sealed class ArriveEvent : InternalEvent
     {
         public override void Invoke()
         {

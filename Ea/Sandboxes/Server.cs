@@ -102,9 +102,9 @@ public class Server<TLoad> : SimulationSandbox<ServerStaticConfig<TLoad>>
     /// <summary>
     /// Represents an event where a load starts being processed.
     /// </summary>
-    private class StartEvent : InternalEvent
+    private sealed class StartEvent : InternalEvent
     {
-        internal TLoad Load { get; set; }
+        internal TLoad Load { private get; set; }
 
         public override void Invoke()
         {
@@ -127,9 +127,9 @@ public class Server<TLoad> : SimulationSandbox<ServerStaticConfig<TLoad>>
     /// <summary>
     /// Represents an event where a load finishes processing.
     /// </summary>
-    private class FinishEvent : InternalEvent
+    private sealed class FinishEvent : InternalEvent
     {
-        internal TLoad Load { get; set; }
+        internal TLoad Load { private get; set; }
 
         public override void Invoke()
         {
@@ -147,7 +147,7 @@ public class Server<TLoad> : SimulationSandbox<ServerStaticConfig<TLoad>>
     /// <summary>
     /// Represents an event to update the Server IsReadyToDepart flag.
     /// </summary>
-    private class UpdateIsReadyToDepartEvent : InternalEvent
+    private sealed class UpdateIsReadyToDepartEvent : InternalEvent
     {
         internal bool IsReadyToDepart { get; set; }
 
@@ -163,7 +163,7 @@ public class Server<TLoad> : SimulationSandbox<ServerStaticConfig<TLoad>>
     /// <summary>
     /// Represents an event to signal a state change in the Server.
     /// </summary>
-    private class StateChangeEvent : InternalEvent
+    private sealed class StateChangeEvent : InternalEvent
     {
         public override void Invoke() { Execute(AssociatedSandbox.OnStateChange.Select(e => e())); }
 
@@ -173,7 +173,7 @@ public class Server<TLoad> : SimulationSandbox<ServerStaticConfig<TLoad>>
     /// <summary>
     /// Represents an event where a load departs from the Server.
     /// </summary>
-    private class DepartEvent : InternalEvent
+    private sealed class DepartEvent : InternalEvent
     {
         public override void Invoke()
         {

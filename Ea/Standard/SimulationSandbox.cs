@@ -8,9 +8,9 @@ namespace Ea.Standard;
 /// and behavior for managing simulation events and randomness.
 /// </summary>
 [SuppressMessage("NDepend", "ND2102:AvoidDefiningMultipleTypesInASourceFile", Justification = "SimulationSandbox<T> is relatively small and closely linked to SimulationSandbox")]
-public abstract class SimulationSandbox : ISimulatorSandbox
+public abstract class SimulationSandboxBase : ISimulatorSandbox
 {
-    private static int _count;
+    private static int Count;
     private int _seed;
     
     public int Index { get; }
@@ -46,9 +46,9 @@ public abstract class SimulationSandbox : ISimulatorSandbox
     /// <param name="name">The name of the sandbox instance.</param>
     /// <param name="tag">The tag associated with the sandbox instance.</param>
     [SuppressMessage("NDepend", "ND3101:DontUseSystemRandomForSecurityPurposes", Justification = "Okay for simulation not having security implications")]
-    public SimulationSandbox(int seed, string name, string tag)
+    protected SimulationSandboxBase(int seed, string name, string tag)
     {
-        Index = ++_count;
+        Index = Interlocked.Increment(ref Count);
         Name = name;
         Tag = tag;
         Seed = seed;
@@ -60,7 +60,7 @@ public abstract class SimulationSandbox : ISimulatorSandbox
     /// </summary>
     /// <param name="events">The collection of simulation events to wrap.</param>
     /// <returns>A new simulation event that represents the batch of events.</returns>
-    public SimulationEvent EventWrapper(IEnumerable<SimulationEvent> events)
+    public static SimulationEvent EventWrapper(IEnumerable<SimulationEvent> events)
     {
         return new SimulationEventInBatch { Events = events };
     }
@@ -79,8 +79,9 @@ public abstract class SimulationSandbox : ISimulatorSandbox
 /// Inherits from <see cref="SimulationSandbox"/>.
 /// </summary>
 /// <typeparam name="T">The type of the static configuration used in the simulation.</typeparam>
+[SuppressMessage("NDepend", "ND2102:AvoidDefiningMultipleTypesInASourceFile", Justification = "SimulationSandbox<T> is relatively small and closely linked to SimulationSandbox")]
 public abstract class SimulationSandbox<T>(T simulationStaticConfig, int seed, string name, string tag)
-    : SimulationSandbox(seed, name, tag)
+    : SimulationSandboxBase(seed, name, tag)
     where T : IStaticConfig
 {
     /// <summary>

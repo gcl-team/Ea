@@ -48,9 +48,9 @@ public class LoadQueue<TLoad> : SimulationSandbox<LoadQueueStaticConfig>
     /// <summary>
     /// Event for enqueuing an item into the queue.
     /// </summary>
-    private class EnqueueEvent : InternalEvent
+    private sealed class EnqueueEvent : InternalEvent
     {
-        internal TLoad Load { get; set; }
+        internal TLoad Load { private get; set; }
 
         public override void Invoke()
         {
@@ -71,9 +71,9 @@ public class LoadQueue<TLoad> : SimulationSandbox<LoadQueueStaticConfig>
     /// <summary>
     /// Event for updating the dequeue status of the queue.
     /// </summary>
-    private class UpdateToDequeueEvent : InternalEvent
+    private sealed class UpdateToDequeueEvent : InternalEvent
     {
-        internal bool ToDequeue { get; set; }
+        internal bool ToDequeue { private get; set; }
 
         public override void Invoke()
         {
@@ -89,7 +89,7 @@ public class LoadQueue<TLoad> : SimulationSandbox<LoadQueueStaticConfig>
     /// <summary>
     /// Event for handling state changes in the queue.
     /// </summary>
-    private class StateChangeEvent : InternalEvent
+    private sealed class StateChangeEvent : InternalEvent
     {
         public override void Invoke()
         {
@@ -102,7 +102,7 @@ public class LoadQueue<TLoad> : SimulationSandbox<LoadQueueStaticConfig>
     /// <summary>
     /// Event for dequeuing the first item from the queue.
     /// </summary>
-    private class DequeueEvent : InternalEvent
+    private sealed class DequeueEvent : InternalEvent
     {
         public override void Invoke()
         {

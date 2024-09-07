@@ -78,7 +78,7 @@ public class TwoStageProcessServer<TLoad> : SimulationSandbox<TwoStageProcessSer
     /// <summary>
     /// Event representing the start of processing for a load in the handling stage.
     /// </summary>
-    private class StartEvent : InternalEvent
+    private sealed class StartEvent : InternalEvent
     {
         internal TLoad Load { get; set; }
         public override void Invoke()
@@ -93,7 +93,7 @@ public class TwoStageProcessServer<TLoad> : SimulationSandbox<TwoStageProcessSer
     /// <summary>
     /// Event representing a state change within the server.
     /// </summary>
-    private class StateChangeEvent : InternalEvent
+    private sealed class StateChangeEvent : InternalEvent
     {
         public override void Invoke() { Execute(AssociatedSandbox.OnStateChange.Select(e => e())); }
         public override string ToString() { return string.Format("{0}_StateChangeEvent", AssociatedSandbox); }

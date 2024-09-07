@@ -10,7 +10,7 @@ public class TimeBasedMetric
     private DateTime _initialTime;
     private Dictionary<DateTime, double> _history;
     
-    public DateTime LastRecordedTime;
+    public DateTime LastRecordedTime { get; set; }
     
     public double LastCount { get; private set; }
     
@@ -65,9 +65,13 @@ public class TimeBasedMetric
     
     public bool IsPaused { get; private set; }
 
-    
     public bool IsHistoryEnabled { get; private set; }
+
+    public Dictionary<double, double> HoursForCount { get; set; }
     
+    public double IncrementRate => TotalIncrementCount / TotalHours;
+    public double DecrementRate => TotalDecrementCount / TotalHours;
+
     /// <summary>
     /// Scatter points of (time in hours, count)
     /// </summary>
@@ -163,9 +167,6 @@ public class TimeBasedMetric
         IsPaused = false;
     }
 
-    public double IncrementRate => TotalIncrementCount / TotalHours;
-    public double DecrementRate => TotalDecrementCount / TotalHours;
-
     public void WarmedUp(DateTime clockTime)
     {
         _initialTime = clockTime;
@@ -174,10 +175,8 @@ public class TimeBasedMetric
         TotalDecrementCount = 0;
         TotalHours = 0;
         CumulativeCount = 0;
-        HoursForCount = new Dictionary<double, double>();
+        HoursForCount = [];
     }
-
-    public Dictionary<double, double> HoursForCount = new();
 
     private void SortHoursForCount()
     {

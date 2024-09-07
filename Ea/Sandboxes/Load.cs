@@ -73,9 +73,10 @@ public class Load : SimulationSandbox<LoadStaticConfig>
     public override void WarmedUp(DateTime clockTime) { }
     
     private abstract class InternalEvent : SimulationEvent<Load, LoadStaticConfig> { }
-    private class LogEvent : InternalEvent
+
+    private sealed class LogEvent : InternalEvent
     {
-        internal SimulationEvent ToLogEvent { get; set; }
+        internal SimulationEvent ToLogEvent { private get; set; }
         
         public override void Invoke()
         {
