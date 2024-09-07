@@ -2,7 +2,7 @@ using Ea.Standard;
 
 namespace Ea.RunStrategies;
 
-public class RunBySimulationEventStrategy(SimulationEvent simulationEvent) : IRunStrategy
+public class RunBySimulationEventStrategy(SimulationEventBase simulationEvent) : IRunStrategy
 {
     public bool Run(Simulator simulator)
     {

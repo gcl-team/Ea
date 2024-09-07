@@ -8,7 +8,7 @@ namespace Ea.Standard;
 /// Represents a base class for all events in the simulation.
 /// </summary>
 [SuppressMessage("NDepend", "ND2102:AvoidDefiningMultipleTypesInASourceFile", Justification = "SimulationEvent<TSandbox, TConfig> is relatively small and closely linked to SimulationEvent")]
-public abstract class SimulationEvent
+public abstract class SimulationEventBase
 {
     private static int Count = 0;
     
@@ -40,14 +40,14 @@ public abstract class SimulationEvent
     /// <summary>
     /// Initializes a new instance of the <see cref="SimulationEvent"/> class.
     /// </summary>
-    protected SimulationEvent() { }
+    protected SimulationEventBase() { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SimulationEvent"/> class 
     /// with an associated simulator.
     /// </summary>
     /// <param name="simulator">The simulator to associate with this event.</param>
-    protected SimulationEvent(Simulator simulator)
+    protected SimulationEventBase(Simulator simulator)
     {
         Simulator = simulator;
     }
@@ -62,7 +62,7 @@ public abstract class SimulationEvent
     /// Executes the given event by delegating the execution to the associated simulator.
     /// </summary>
     /// <param name="simulationEvent">The event to execute.</param>
-    protected virtual void Execute(SimulationEvent simulationEvent) 
+    protected virtual void Execute(SimulationEventBase simulationEvent) 
     { 
         if (Simulator == null) 
             throw new SimulationException("Simulator is not assigned.");
@@ -79,8 +79,8 @@ public abstract class SimulationEvent
 /// <typeparam name="TSandbox">The type of the sandbox associated with this event.</typeparam>
 /// <typeparam name="TConfig">The type of the configuration used by the sandbox.</typeparam>
 [SuppressMessage("NDepend", "ND2102:AvoidDefiningMultipleTypesInASourceFile", Justification = "SimulationEvent<TSandbox, TConfig> is relatively small and closely linked to SimulationEvent")]
-public abstract class SimulationEvent<TSandbox, TConfig> : SimulationEvent 
-    where TSandbox : SimulationSandbox<TConfig>
+public abstract class SimulationEventBase<TSandbox, TConfig> : SimulationEventBase 
+    where TSandbox : SimulationSandboxBase<TConfig>
     where TConfig : IStaticConfig
 {        
     /// <summary>
@@ -102,9 +102,9 @@ public abstract class SimulationEvent<TSandbox, TConfig> : SimulationEvent
     /// </summary>
     protected Random DefaultRs => AssociatedSandbox.DefaultRs;
 
-    protected SimulationEvent() { }
+    protected SimulationEventBase() { }
 
-    protected SimulationEvent(TSandbox sandbox)
+    protected SimulationEventBase(TSandbox sandbox)
     {
         Sandbox = sandbox;
     }
@@ -113,7 +113,7 @@ public abstract class SimulationEvent<TSandbox, TConfig> : SimulationEvent
     /// Execute events in a batch
     /// </summary>
     /// <param name="simulationEvent">Batch of events to be executed</param>
-    protected void Execute(IEnumerable<SimulationEvent> simulationEvent)
+    protected void Execute(IEnumerable<SimulationEventBase> simulationEvent)
     {
         foreach (var simulationEven in simulationEvent.ToList())
         {
@@ -121,7 +121,7 @@ public abstract class SimulationEvent<TSandbox, TConfig> : SimulationEvent
         }
     }
 
-    protected void Schedule(SimulationEvent simulationEvent, DateTime time)
+    protected void Schedule(SimulationEventBase simulationEvent, DateTime time)
     {
         if (Simulator == null) 
             throw new SimulationException("Simulator is not assigned.");
@@ -129,17 +129,17 @@ public abstract class SimulationEvent<TSandbox, TConfig> : SimulationEvent
         Simulator.Schedule(simulationEvent, time);
     }
 
-    protected void Schedule(SimulationEvent simulationEvent, TimeSpan delay)
+    protected void Schedule(SimulationEventBase simulationEvent, TimeSpan delay)
     {
         Schedule(simulationEvent, ClockTime + delay);
     }
 
-    protected void Schedule(SimulationEvent simulationEvent)
+    protected void Schedule(SimulationEventBase simulationEvent)
     {
         Schedule(simulationEvent, ClockTime);
     }
     
-    protected void Schedule(IEnumerable<SimulationEvent> simulationEvents)
+    protected void Schedule(IEnumerable<SimulationEventBase> simulationEvents)
     {
         foreach (var simulationEvent in simulationEvents)
         {

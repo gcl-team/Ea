@@ -8,7 +8,7 @@ namespace Ea.Sandboxes;
 /// Represents a server with two distinct processing stages: Handling and Restoring.
 /// </summary>
 /// <typeparam name="TLoad">The type of load that the server handles.</typeparam>
-public class TwoStageProcessServer<TLoad> : SimulationSandbox<TwoStageProcessServerStaticConfig<TLoad>>
+public class TwoStageProcessServer<TLoad> : SimulationSandboxBase<TwoStageProcessServerStaticConfig<TLoad>>
 {
     /// <summary>
     /// Server that handles the initial processing stage of the load.
@@ -73,7 +73,7 @@ public class TwoStageProcessServer<TLoad> : SimulationSandbox<TwoStageProcessSer
     /// <summary>
     /// Base class for internal events within the <see cref="TwoStageProcessServer{TLoad}"/>.
     /// </summary>
-    private abstract class InternalEvent : SimulationEvent<TwoStageProcessServer<TLoad>, TwoStageProcessServerStaticConfig<TLoad>> { }
+    private abstract class InternalEvent : SimulationEventBase<TwoStageProcessServer<TLoad>, TwoStageProcessServerStaticConfig<TLoad>> { }
 
     /// <summary>
     /// Event representing the start of processing for a load in the handling stage.
@@ -104,9 +104,13 @@ public class TwoStageProcessServer<TLoad> : SimulationSandbox<TwoStageProcessSer
     /// </summary>
     /// <param name="load">The load to be processed.</param>
     /// <returns>An event representing the start of processing.</returns>
-    public SimulationEvent Start(TLoad load)
+    public SimulationEventBase Start(TLoad load)
     {
-        return new StartEvent { AssociatedSandbox = this, Load = load };
+        return new StartEvent 
+        { 
+            AssociatedSandbox = this, 
+            Load = load 
+        };
     }
 
     /// <summary>
@@ -114,7 +118,7 @@ public class TwoStageProcessServer<TLoad> : SimulationSandbox<TwoStageProcessSer
     /// </summary>
     /// <param name="isReadyToDepart">True to allow departures, false to prevent them.</param>
     /// <returns>An event representing the update.</returns>
-    public SimulationEvent UpdateIsReadyToDepart(bool isReadyToDepart)
+    public SimulationEventBase UpdateIsReadyToDepart(bool isReadyToDepart)
     {
         return HandlingServer.UpdateIsReadyToDepart(isReadyToDepart);
     }
@@ -122,17 +126,17 @@ public class TwoStageProcessServer<TLoad> : SimulationSandbox<TwoStageProcessSer
     /// <summary>
     /// Events triggered when a load departs from the handling stage.
     /// </summary>
-    public List<Func<TLoad, SimulationEvent>> OnHandlingStageDepart => HandlingServer.OnDepart;
+    public List<Func<TLoad, SimulationEventBase>> OnHandlingStageDepart => HandlingServer.OnDepart;
 
     /// <summary>
     /// Events triggered when a load departs from the restoring stage.
     /// </summary>
-    public List<Func<TLoad, SimulationEvent>> OnRestoringStageDepart => RestoringServer.OnDepart;
+    public List<Func<TLoad, SimulationEventBase>> OnRestoringStageDepart => RestoringServer.OnDepart;
 
     /// <summary>
     /// Events triggered when the state of the server changes.
     /// </summary>
-    public List<Func<SimulationEvent>> OnStateChange { get; private set; } = new();
+    public List<Func<SimulationEventBase>> OnStateChange { get; private set; } = new();
     
     /// <summary>
     /// Initializes a new instance of the <see cref="TwoStageServer{TLoad}"/> class.

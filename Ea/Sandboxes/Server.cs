@@ -8,7 +8,7 @@ namespace Ea.Sandboxes;
 /// Represents a Server in a discrete event simulation that processes loads.
 /// </summary>
 /// <typeparam name="TLoad">The type of load that the Server processes.</typeparam>
-public class Server<TLoad> : SimulationSandbox<ServerStaticConfig<TLoad>>
+public class Server<TLoad> : SimulationSandboxBase<ServerStaticConfig<TLoad>>
 {
     /// <summary>
     /// The set of loads currently being processed by the Server.
@@ -93,11 +93,11 @@ public class Server<TLoad> : SimulationSandbox<ServerStaticConfig<TLoad>>
     {
         return Served.FirstOrDefault();
     }
-    
+
     /// <summary>
     /// Base class for internal events in the Server class.
     /// </summary>
-    private abstract class InternalEvent : SimulationEvent<Server<TLoad>, ServerStaticConfig<TLoad>> { }
+    private abstract class InternalEvent : SimulationEventBase<Server<TLoad>, ServerStaticConfig<TLoad>> { }
 
     /// <summary>
     /// Represents an event where a load starts being processed.
@@ -108,16 +108,16 @@ public class Server<TLoad> : SimulationSandbox<ServerStaticConfig<TLoad>>
 
         public override void Invoke()
         {
-            if (AssociatedSandbox.Vacancy < 1) 
+            if (AssociatedSandbox.Vacancy < 1)
                 throw new SimulationException("Make sure the vacancy of the Server is not zero before execute Start event.");
-            
+
             AssociatedSandbox.PushIn(Load);
             AssociatedSandbox.UtilizationCounter.ObserveChange(1, ClockTime);
             AssociatedSandbox.OccupationCounter.ObserveChange(1, ClockTime);
             AssociatedSandbox.StartTimeRecords.Add(Load, ClockTime);
-            
+
             Schedule(new FinishEvent { Load = Load }, Config.ServiceTime(Load, DefaultRs));
-            
+
             Execute(new StateChangeEvent());
         }
 
@@ -143,7 +143,7 @@ public class Server<TLoad> : SimulationSandbox<ServerStaticConfig<TLoad>>
 
         public override string ToString() { return string.Format("{0}_FinishEvent", AssociatedSandbox); }
     }
-    
+
     /// <summary>
     /// Represents an event to update the Server IsReadyToDepart flag.
     /// </summary>
@@ -197,18 +197,25 @@ public class Server<TLoad> : SimulationSandbox<ServerStaticConfig<TLoad>>
     /// </summary>
     /// <param name="load">The load to be processed.</param>
     /// <returns>A StartEvent to trigger the process.</returns>
-    public SimulationEvent Start(TLoad load) { return new StartEvent { AssociatedSandbox = this, Load = load }; }
+    public SimulationEventBase Start(TLoad load)
+    {
+        return new StartEvent
+        { 
+            AssociatedSandbox = this, 
+            Load = load 
+        };
+    }
 
     /// <summary>
     /// Creates an event to update the departure IsReadyToDepart.
     /// </summary>
     /// <param name="isReadyToDepart">Indicates whether loads should depart.</param>
     /// <returns>An UpdateIsReadyToDepartEvent to trigger the status update.</returns>
-    public SimulationEvent UpdateIsReadyToDepart(bool isReadyToDepart)
+    public SimulationEventBase UpdateIsReadyToDepart(bool isReadyToDepart)
     {
         return new UpdateIsReadyToDepartEvent
         {
-            AssociatedSandbox = this, 
+            AssociatedSandbox = this,
             IsReadyToDepart = isReadyToDepart
         };
     }
@@ -216,12 +223,12 @@ public class Server<TLoad> : SimulationSandbox<ServerStaticConfig<TLoad>>
     /// <summary>
     /// List of functions that define what happens when loads depart.
     /// </summary>
-    public List<Func<TLoad, SimulationEvent>> OnDepart { get; private set; } = new();
+    public List<Func<TLoad, SimulationEventBase>> OnDepart { get; private set; } = new();
 
     /// <summary>
     /// List of functions that define what happens when the Server state changes.
     /// </summary>
-    public List<Func<SimulationEvent>> OnStateChange { get; private set; } = new();
+    public List<Func<SimulationEventBase>> OnStateChange { get; private set; } = new();
 
     /// <summary>
     /// Initializes a new instance of the Server class with a given configuration, seed, and optional tag.

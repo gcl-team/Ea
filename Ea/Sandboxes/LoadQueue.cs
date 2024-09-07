@@ -8,7 +8,7 @@ namespace Ea.Sandboxes;
 /// Represents a queueing system where items can be enqueued and dequeued.
 /// </summary>
 /// <typeparam name="TLoad">The type of load that the queue can hold.</typeparam>
-public class LoadQueue<TLoad> : SimulationSandbox<LoadQueueStaticConfig>
+public class LoadQueue<TLoad> : SimulationSandboxBase<LoadQueueStaticConfig>
 {
     /// <summary>
     /// List of items currently in the queue.
@@ -43,7 +43,7 @@ public class LoadQueue<TLoad> : SimulationSandbox<LoadQueueStaticConfig>
     /// <summary>
     /// Base class for internal events in the queueing system.
     /// </summary>
-    private abstract class InternalEvent : SimulationEvent<LoadQueue<TLoad>, LoadQueueStaticConfig> { }
+    private abstract class InternalEvent : SimulationEventBase<LoadQueue<TLoad>, LoadQueueStaticConfig> { }
 
     /// <summary>
     /// Event for enqueuing an item into the queue.
@@ -131,7 +131,7 @@ public class LoadQueue<TLoad> : SimulationSandbox<LoadQueueStaticConfig>
     /// </summary>
     /// <param name="load">The item to enqueue.</param>
     /// <returns>An event for enqueuing the item.</returns>
-    public SimulationEvent Enqueue(TLoad load) => new EnqueueEvent
+    public SimulationEventBase Enqueue(TLoad load) => new EnqueueEvent
     {
         AssociatedSandbox = this, 
         Load = load
@@ -142,7 +142,7 @@ public class LoadQueue<TLoad> : SimulationSandbox<LoadQueueStaticConfig>
     /// </summary>
     /// <param name="toDequeue">The new dequeue status.</param>
     /// <returns>An event for updating the dequeue status.</returns>
-    public SimulationEvent UpdateToDequeue(bool toDequeue) => new UpdateToDequeueEvent
+    public SimulationEventBase UpdateToDequeue(bool toDequeue) => new UpdateToDequeueEvent
     {
         AssociatedSandbox = this, 
         ToDequeue = toDequeue
@@ -152,12 +152,12 @@ public class LoadQueue<TLoad> : SimulationSandbox<LoadQueueStaticConfig>
     /// <summary>
     /// Actions to perform when an item is dequeued.
     /// </summary>
-    public List<Func<TLoad, SimulationEvent>> OnDequeue { get; private set; } = new List<Func<TLoad, SimulationEvent>>();
+    public List<Func<TLoad, SimulationEventBase>> OnDequeue { get; private set; } = new List<Func<TLoad, SimulationEventBase>>();
     
     /// <summary>
     /// Actions to perform when the state changes.
     /// </summary>
-    public List<Func<SimulationEvent>> OnStateChange { get; private set; } = new List<Func<SimulationEvent>>();
+    public List<Func<SimulationEventBase>> OnStateChange { get; private set; } = new List<Func<SimulationEventBase>>();
     
     /// <summary>
     /// Initializes a new instance of the <see cref="Queueing{TLoad}"/> class with default settings.

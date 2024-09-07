@@ -15,7 +15,7 @@ public class Simulator
     public SimulationSandboxBase Sandbox { get; private set; }
     public DateTime HeadEventTime => HasFutureEvents ? FutureEventList.First().ScheduledTime : DateTime.MaxValue;
     
-    internal SortedSet<SimulationEvent> FutureEventList { get; } = new(new FutureEventComparer());
+    internal SortedSet<SimulationEventBase> FutureEventList { get; } = new(new FutureEventComparer());
     
     public Simulator(SimulationSandboxBase sandbox, ILoggerFactory loggerFactory)
     {
@@ -42,7 +42,7 @@ public class Simulator
         return result;
     }
     
-    internal void Schedule(SimulationEvent simulationEvent, DateTime time)
+    internal void Schedule(SimulationEventBase simulationEvent, DateTime time)
     {
         simulationEvent.Simulator ??= this;
 
@@ -52,7 +52,7 @@ public class Simulator
         FutureEventList.Add(simulationEvent);
     }
     
-    internal void Execute(SimulationEvent simulationEvent)
+    internal void Execute(SimulationEventBase simulationEvent)
     {
         simulationEvent.Simulator = this;
         simulationEvent.Invoke();

@@ -31,7 +31,7 @@ public abstract class SimulationSandboxBase : ISimulatorSandbox
     /// <summary>
     /// Gets the list of simulation events associated with this sandbox.
     /// </summary>
-    public List<SimulationEvent> SimulationEvents { get; } = [];
+    public List<SimulationEventBase> SimulationEvents { get; } = [];
     
     /// <summary>
     /// Gets the default random number generator, which is initialized with the seed.
@@ -60,9 +60,9 @@ public abstract class SimulationSandboxBase : ISimulatorSandbox
     /// </summary>
     /// <param name="events">The collection of simulation events to wrap.</param>
     /// <returns>A new simulation event that represents the batch of events.</returns>
-    public static SimulationEvent EventWrapper(IEnumerable<SimulationEvent> events)
+    public static SimulationEventBase EventWrapper(IEnumerable<SimulationEventBase> events)
     {
-        return new SimulationEventInBatch { Events = events };
+        return new SimulationEventInBatch { SimulationEvents = events };
     }
 
     public abstract void WarmedUp(DateTime clockTime);
@@ -80,7 +80,7 @@ public abstract class SimulationSandboxBase : ISimulatorSandbox
 /// </summary>
 /// <typeparam name="T">The type of the static configuration used in the simulation.</typeparam>
 [SuppressMessage("NDepend", "ND2102:AvoidDefiningMultipleTypesInASourceFile", Justification = "SimulationSandbox<T> is relatively small and closely linked to SimulationSandbox")]
-public abstract class SimulationSandbox<T>(T simulationStaticConfig, int seed, string name, string tag)
+public abstract class SimulationSandboxBase<T>(T simulationStaticConfig, int seed, string name, string tag)
     : SimulationSandboxBase(seed, name, tag)
     where T : IStaticConfig
 {
