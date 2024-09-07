@@ -1,11 +1,13 @@
 using Ea.Exceptions;
 using Ea.StaticConfigs;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Ea.Standard;
 
 /// <summary>
 /// Represents a base class for all events in the simulation.
 /// </summary>
+[SuppressMessage("NDepend", "ND2102:AvoidDefiningMultipleTypesInASourceFile", Justification = "SimulationEvent<TSandbox, TConfig> is relatively small and closely linked to SimulationEvent")]
 public abstract class SimulationEvent
 {
     private static int _count = 0;

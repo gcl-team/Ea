@@ -1,4 +1,5 @@
 using Ea.StaticConfigs;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Ea.Standard;
 
@@ -6,6 +7,7 @@ namespace Ea.Standard;
 /// Represents the base class for a simulation sandbox, providing a common structure 
 /// and behavior for managing simulation events and randomness.
 /// </summary>
+[SuppressMessage("NDepend", "ND2102:AvoidDefiningMultipleTypesInASourceFile", Justification = "SimulationSandbox<T> is relatively small and closely linked to SimulationSandbox")]
 public abstract class SimulationSandbox : ISimulatorSandbox
 {
     private static int _count;
@@ -18,6 +20,7 @@ public abstract class SimulationSandbox : ISimulatorSandbox
     public int Seed
     {
         get => _seed;
+        [SuppressMessage("NDepend", "ND3101:DontUseSystemRandomForSecurityPurposes", Justification = "Okay for simulation not having security implications")]
         set
         {
             _seed = value; 
@@ -42,6 +45,7 @@ public abstract class SimulationSandbox : ISimulatorSandbox
     /// <param name="seed">The seed value for the random number generator.</param>
     /// <param name="name">The name of the sandbox instance.</param>
     /// <param name="tag">The tag associated with the sandbox instance.</param>
+    [SuppressMessage("NDepend", "ND3101:DontUseSystemRandomForSecurityPurposes", Justification = "Okay for simulation not having security implications")]
     public SimulationSandbox(int seed, string name, string tag)
     {
         Index = ++_count;
