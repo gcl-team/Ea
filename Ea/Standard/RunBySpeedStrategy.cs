@@ -1,4 +1,4 @@
-namespace Ea.RunStrategies;
+namespace Ea.Standard;
 
 public class RunBySpeedStrategy(double speed) : IRunStrategy
 {

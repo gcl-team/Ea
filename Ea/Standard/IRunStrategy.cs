@@ -1,4 +1,4 @@
-namespace Ea.RunStrategies;
+namespace Ea.Standard;
 
 public interface IRunStrategy
 {

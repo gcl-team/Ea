@@ -1,28 +1,26 @@
 using Ea.Exceptions;
-using Ea.RunStrategies;
-using Ea.Standard;
 using Microsoft.Extensions.Logging;
 
-namespace Ea;
+namespace Ea.Standard;
 
 public class Simulator
 {
     private readonly ILogger<Simulator> _logger;
-    
+
     public DateTime? RealTimeForLastRun { get; set; }
     public bool HasFutureEvents => FutureEventList.Count > 0;
     public DateTime ClockTime { get; protected internal set; } = DateTime.MinValue;
     public SimulationSandboxBase Sandbox { get; private set; }
     public DateTime HeadEventTime => HasFutureEvents ? FutureEventList.First().ScheduledTime : DateTime.MaxValue;
-    
+
     internal SortedSet<SimulationEventBase> FutureEventList { get; } = new(new FutureEventComparer());
-    
+
     public Simulator(SimulationSandboxBase sandbox, ILoggerFactory loggerFactory)
     {
         _logger = loggerFactory.CreateLogger<Simulator>();
-        
+
         Sandbox = sandbox ?? throw new ArgumentNullException(nameof(sandbox));
-        
+
         foreach (var simulationEvent in Sandbox.SimulationEvents)
         {
             Schedule(simulationEvent, ClockTime);
@@ -41,7 +39,7 @@ public class Simulator
         Sandbox.WarmedUp(ClockTime);
         return result;
     }
-    
+
     internal void Schedule(SimulationEventBase simulationEvent, DateTime time)
     {
         simulationEvent.Simulator ??= this;
@@ -51,7 +49,7 @@ public class Simulator
         simulationEvent.ScheduledTime = time;
         FutureEventList.Add(simulationEvent);
     }
-    
+
     internal void Execute(SimulationEventBase simulationEvent)
     {
         simulationEvent.Simulator = this;

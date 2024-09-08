@@ -1,6 +1,4 @@
-using Ea.Standard;
-
-namespace Ea.RunStrategies;
+namespace Ea.Standard;
 
 public class RunBySimulationEventStrategy(SimulationEventBase simulationEvent) : IRunStrategy
 {
