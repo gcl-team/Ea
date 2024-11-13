@@ -38,7 +38,7 @@ internal class GammaHelperTests
     {
         var result = GammaHelper.Sample(new Random(100), TimeSpan.FromSeconds(mean), 0.5);
         
-        Assert.AreEqual(expectedValue, result.Seconds);
+        Assert.That(result.Seconds, Is.EqualTo(expectedValue));
     }
 
     [Test]
@@ -55,7 +55,7 @@ internal class GammaHelperTests
     {
         var result = GammaHelper.Cdf(mean, 0, x);
         
-        Assert.AreEqual(expectedValue, result);
+        Assert.That(result, Is.EqualTo(expectedValue));
     }
 
     [Test]
@@ -74,7 +74,7 @@ internal class GammaHelperTests
         
         var result = GammaHelper.InvCdf(mean, 0, p);
         
-        Assert.AreEqual(mean, result);
+        Assert.That(result, Is.EqualTo(mean));
     }
 
     [Test]

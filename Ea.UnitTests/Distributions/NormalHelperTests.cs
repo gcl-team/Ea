@@ -11,7 +11,7 @@ public class NormalHelperTests
     public void Sample_ValidInput_ReturnsExpectedValue(double mean, double cv, double expectedValue)
     {
         var result = NormalHelper.Sample(new Random(100), mean, cv);
-        Assert.AreEqual(expectedValue, result);
+        Assert.That(result, Is.EqualTo(expectedValue));
     }
 
     [TestCase(-1, 1)]

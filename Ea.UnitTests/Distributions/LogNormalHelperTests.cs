@@ -19,7 +19,7 @@ public class LogNormalHelperTests
     {
         var result = LogNormalHelper.Sample(new Random(100), mean, cv);
         
-        Assert.AreEqual(expectedValue, result);
+        Assert.That(result, Is.EqualTo(expectedValue));
     }
     
     [TestCase(-1, 0.5)]
@@ -42,7 +42,7 @@ public class LogNormalHelperTests
     {
         var result = LogNormalHelper.Cdf(mean, cv, x);
         
-        Assert.AreEqual(expectedValue, result);
+        Assert.That(result, Is.EqualTo(expectedValue));
     }
 
     [TestCase(0)]
@@ -65,7 +65,7 @@ public class LogNormalHelperTests
     {
         var result = LogNormalHelper.InvCdf(mean, cv, p);
         
-        Assert.AreEqual(expectedValue, result);
+        Assert.That(result, Is.EqualTo(expectedValue));
     }
 
     [TestCase(0)]
